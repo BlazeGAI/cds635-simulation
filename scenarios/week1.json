@@ -110,9 +110,27 @@
     }
   ],
   "required_final_selections": {
-    "primaryHypothesis": "Current activity is primarily a phishing-driven indicator set; intelligence suggests elevated threat interest but not confirmed enterprise compromise.",
-    "riskLevel": "Medium",
-    "confidenceLevel": "Medium"
+    "primaryHypothesis": {
+      "mode": "freeText",
+      "minLength": 1
+    },
+    "riskLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ]
+    },
+    "confidenceLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    }
   },
   "downloadable_artifacts": [
     {
