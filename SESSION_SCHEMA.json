@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CDS635 Session Record Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sessionId": {
+      "type": "string"
+    },
+    "studentDisplayName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scenarioId": {
+      "type": "string"
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completedAt": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "durationMinutes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "primaryHypothesis": {
+      "type": "string",
+      "minLength": 1
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": ["Low", "Medium", "High", "Critical"]
+    },
+    "confidenceLevel": {
+      "type": "string",
+      "enum": ["Low", "Medium", "High"]
+    },
+    "branchDecisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/BranchDecision"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "NOT_STARTED",
+        "IN_BRIEFING",
+        "IN_EVIDENCE_REVIEW",
+        "IN_DECISION_SELECTION",
+        "COMPLETED"
+      ]
+    }
+  },
+  "required": [
+    "sessionId",
+    "studentDisplayName",
+    "scenarioId",
+    "startedAt",
+    "completedAt",
+    "durationMinutes",
+    "primaryHypothesis",
+    "riskLevel",
+    "confidenceLevel",
+    "branchDecisions",
+    "status"
+  ],
+  "$defs": {
+    "BranchDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "branchId": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "selectedOption": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["branchId", "prompt", "selectedOption", "timestamp"]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "COMPLETED"
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "primaryHypothesis": {
+            "type": "string",
+            "minLength": 1
+          },
+          "riskLevel": {
+            "type": "string",
+            "enum": ["Low", "Medium", "High", "Critical"]
+          },
+          "confidenceLevel": {
+            "type": "string",
+            "enum": ["Low", "Medium", "High"]
+          }
+        },
+        "required": [
+          "completedAt",
+          "durationMinutes",
+          "primaryHypothesis",
+          "riskLevel",
+          "confidenceLevel"
+        ]
+      }
+    }
+  ]
+}
