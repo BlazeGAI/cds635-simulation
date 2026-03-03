@@ -2,6 +2,23 @@
   "name": "cds635-simulation",
   "private": true,
   "scripts": {
-    "validate:scenarios": "node scripts/validate-scenarios.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "validate:scenarios": "node scripts/validate-scenarios.mjs",
+    "validate:session": "node scripts/validate-session.mjs"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "next": "14.2.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.5",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.4"
   }
 }
