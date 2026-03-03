@@ -1,0 +1,194 @@
+{
+  "scenarioId": "week5-network-behavior-assessment",
+  "title": "Week 5: Network Behavior Assessment — Beaconing vs Exfiltration vs Benign Traffic",
+  "briefing": {
+    "narrative": "The university SOC is triaging unusual encrypted outbound traffic from a research administration workstation and adjacent service hosts. Leadership wants an initial analytic judgment before authorizing disruptive containment. Available telemetry includes network summaries, DNS behavior, TLS metadata, proxy logs, endpoint process context, and competing analyst interpretations. Some evidence suggests command-and-control beaconing, while other artifacts could fit legitimate SaaS synchronization or scheduled backup behavior.",
+    "instructions": "Evaluate encrypted outbound traffic patterns, distinguish possible C2 beaconing from benign SaaS/API traffic, assess the likelihood of staged data exfiltration, and identify the highest-confidence investigative pivot. Follow the decision path to record your reasoning under uncertainty before selecting your final hypothesis, risk level, and confidence."
+  },
+  "evidence_items": [
+    {
+      "id": "E5-01",
+      "type": "timeline",
+      "content": "NetFlow summary (host RA-WS-22, 10.44.18.27): 09:00-12:00 UTC, recurring TLS sessions every 305-315 seconds to 198.51.100.44 (resolved as api-sync-edge[.]net) with 1.1-1.6 KB outbound and 18-42 KB inbound per interval. Separate burst at 11:42 UTC: 312 MB outbound over 9 minutes to 203.0.113.77 (cdn-storage-gateway[.]com) with no equivalent inbound response volume."
+    },
+    {
+      "id": "E5-02",
+      "type": "indicator",
+      "content": "DNS resolver pattern for RA-WS-22: 286 queries in 3 hours to *.api-sync-edge[.]net, mostly randomized 12-16 character subdomains (example: k9f2q1m4z8p1.api-sync-edge[.]net). TTL values fluctuate between 25s and 45s. Query cadence aligns closely with 5-minute connection intervals."
+    },
+    {
+      "id": "E5-03",
+      "type": "report",
+      "content": "TLS metadata summary: SNI frequently presents as api-sync-edge.net, certificate issuer 'R3 / Let's Encrypt', cert validity 90 days, SAN includes wildcard entries. JA3-style client description appears as '771,4865-4866-4867-49195,0-11-10-35-16-5-13,23-24-25,0' and matches both commodity remote-access tooling reports and several modern Electron-based SaaS clients in internal baselines."
+    },
+    {
+      "id": "E5-04",
+      "type": "report",
+      "content": "Secure web proxy excerpt (user context: svc_researchsync): User-Agent alternates between 'ResearchSyncClient/4.8.2 (Windows NT 10.0; Win64; x64)' and generic 'python-requests/2.31'. Response codes mostly 200/204 for api-sync-edge.net check-ins (response bodies under 50 KB). At 11:42-11:51 UTC, uploads to cdn-storage-gateway.com returned HTTP 201 with cumulative 327,155,212 bytes sent."
+    },
+    {
+      "id": "E5-05",
+      "type": "statement",
+      "content": "Endpoint process lineage (EDR snippet): parent process explorer.exe launched rsync_helper.exe (signed by NorthBridge Data Tools) at 08:58; rsync_helper.exe spawned powershell.exe with encoded command that initiated outbound TLS sockets. A separate process, backupagent.exe, also initiated HTTPS sessions during the same window under service account svc_researchsync."
+    },
+    {
+      "id": "E5-06",
+      "type": "report",
+      "content": "AI triage assistant summary: 'High likelihood malware beaconing with probable C2 over HTTPS. Regular callback timing, randomized DNS labels, and mixed user-agent behavior strongly resemble known beacon frameworks. Recommend immediate host isolation.' Note: model confidence high (0.91) but summary generated without access to maintenance calendar, approved software inventory, or full packet payloads."
+    },
+    {
+      "id": "E5-07",
+      "type": "report",
+      "content": "Change-management ticket CHG-7781: Research Computing approved pilot deployment of ResearchSyncClient 4.8.x and BackupAgent policy update for offsite archival between 11:30-12:00 UTC on weekdays. Expected behavior includes short health-check API calls plus periodic bulk transfer of encrypted project snapshots to cloud object storage endpoints."
+    },
+    {
+      "id": "E5-08",
+      "type": "indicator",
+      "content": "Threat intel feed: 198.51.100.44 appeared in two recent reports as transient C2 redirector infrastructure used by an access broker, but confidence is 'medium-low' due to shared hosting and rapid IP reassignment. Domain api-sync-edge.net is newly observed in enterprise telemetry (first seen 9 days ago)."
+    },
+    {
+      "id": "E5-09",
+      "type": "timeline",
+      "content": "DLP timeline: 11:41 archive file 'grant_export_q3.7z' (308 MB) created in C:\\ProgramData\\ResearchSync\\staging; 11:42 outbound transfer begins; 11:52 local archive deleted by scheduled task; no DLP content inspection possible because transfer channel was encrypted and destination categorized as 'Business Tools/Cloud Storage'."
+    },
+    {
+      "id": "E5-10",
+      "type": "statement",
+      "content": "SOC analyst note: Connection periodicity and low-volume check-ins look beacon-like, but same host has documented SaaS connectors that poll every 5 minutes. Single large transfer could indicate either scheduled backup chunking or staged exfiltration after discovery. Current evidence supports multiple defensible interpretations."
+    }
+  ],
+  "decision_nodes": [
+    {
+      "id": "D5-01",
+      "prompt": "Is this traffic pattern more consistent with beaconing, staged data exfiltration, or benign SaaS/API activity?",
+      "recordInFinalScreen": false,
+      "options": [
+        {
+          "label": "Primarily suspicious beaconing/C2 pattern",
+          "nextNodeId": "D5-02"
+        },
+        {
+          "label": "Primarily staged data exfiltration pattern",
+          "nextNodeId": "D5-03"
+        },
+        {
+          "label": "Primarily benign SaaS sync/backup pattern",
+          "nextNodeId": "D5-04"
+        }
+      ]
+    },
+    {
+      "id": "D5-02",
+      "prompt": "Which traffic characteristic carries the most analytic weight right now?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Regular low-volume interval timing plus randomized DNS subdomains",
+          "nextNodeId": "D5-04"
+        },
+        {
+          "label": "Endpoint process lineage showing encoded PowerShell network initiation",
+          "nextNodeId": "D5-04"
+        },
+        {
+          "label": "Large outbound burst to cloud storage domain with limited inbound response",
+          "nextNodeId": "D5-04"
+        }
+      ]
+    },
+    {
+      "id": "D5-03",
+      "prompt": "What is the most likely stage of the intrusion lifecycle represented by the observed traffic?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Command-and-control maintenance with tasking/check-in",
+          "nextNodeId": "D5-04"
+        },
+        {
+          "label": "Collection and staging followed by attempted exfiltration",
+          "nextNodeId": "D5-04"
+        },
+        {
+          "label": "Post-compromise living-off-the-land activity blended with legitimate tools",
+          "nextNodeId": "D5-04"
+        }
+      ]
+    },
+    {
+      "id": "D5-04",
+      "prompt": "What is the highest-value investigative pivot to reduce uncertainty fastest?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Correlate service account job schedule, change ticket scope, and exact transfer destinations",
+          "nextNodeId": "D5-05"
+        },
+        {
+          "label": "Acquire memory and process command-line artifacts from RA-WS-22 for C2 tooling traces",
+          "nextNodeId": "D5-05"
+        },
+        {
+          "label": "Request cloud-side object access logs and API token usage for uploaded artifacts",
+          "nextNodeId": "D5-05"
+        }
+      ]
+    },
+    {
+      "id": "D5-05",
+      "prompt": "Under uncertainty, what immediate mitigation priority is most defensible?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Isolate RA-WS-22 immediately and rotate associated service credentials",
+          "nextNodeId": null
+        },
+        {
+          "label": "Allow operations to continue but enforce egress restrictions to known approved endpoints only",
+          "nextNodeId": null
+        },
+        {
+          "label": "Place host in heightened monitoring with rapid evidence collection before containment",
+          "nextNodeId": null
+        }
+      ]
+    }
+  ],
+  "required_final_selections": {
+    "primaryHypothesis": {
+      "mode": "options",
+      "options": [
+        "Low-and-slow HTTPS beaconing is the primary behavior, with periodic check-ins masquerading as API traffic and no confirmed high-volume exfiltration yet.",
+        "Observed sequence most likely reflects staged data exfiltration using a legitimate-appearing cloud storage path after local archive preparation.",
+        "Traffic is predominantly benign ResearchSync/backup activity from a newly deployed service, and suspicious indicators are largely overlap with normal encrypted SaaS behavior.",
+        "A blended scenario is most plausible: legitimate sync tooling is present, but attacker abuse of that channel enabled covert C2 and selective data theft.",
+        "Current telemetry is insufficient to distinguish malicious beaconing from sanctioned automation with high confidence; additional pivot data is required before declaring incident status."
+      ]
+    },
+    "riskLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ]
+    },
+    "confidenceLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    }
+  },
+  "downloadable_artifacts": [
+    {
+      "format": "JSON"
+    },
+    {
+      "format": "PDF"
+    }
+  ]
+}
