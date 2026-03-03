@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import Ajv, { ErrorObject } from 'ajv';
+import Ajv2020, { type ErrorObject, type ValidateFunction } from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 
 export type Scenario = {
@@ -22,14 +22,14 @@ export type Scenario = {
   downloadable_artifacts: Array<{ format: 'JSON' | 'PDF' | 'TXT' }>;
 };
 
-const ajv = new Ajv({ allErrors: true, strict: false });
-addFormats(ajv);
+let compiled: ValidateFunction | null = null;
 
-let compiled: ReturnType<Ajv['compile']> | null = null;
-
-async function getValidator() {
+async function getValidator(): Promise<ValidateFunction> {
   if (compiled) return compiled;
+
   const rawSchema = await fs.readFile(path.join(process.cwd(), 'SCENARIO_SCHEMA.json'), 'utf8');
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  addFormats(ajv);
   compiled = ajv.compile(JSON.parse(rawSchema));
   return compiled;
 }

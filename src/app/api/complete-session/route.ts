@@ -1,17 +1,25 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import Ajv from 'ajv';
+import Ajv2020, { type ValidateFunction } from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { SESSION_COOKIE_NAME, verifySessionCookie } from '@/src/lib/session';
 
-const ajv = new Ajv({ allErrors: true, strict: false });
-addFormats(ajv);
-const sessionSchema = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'SESSION_SCHEMA.json'), 'utf8'));
-const validateSession = ajv.compile(sessionSchema);
+let validateSession: ValidateFunction | null = null;
+
+function getSessionValidator(): ValidateFunction {
+  if (validateSession) return validateSession;
+
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  addFormats(ajv);
+  const sessionSchema = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'SESSION_SCHEMA.json'), 'utf8'));
+  validateSession = ajv.compile(sessionSchema);
+  return validateSession;
+}
 
 export async function POST(req: Request) {
+  const validate = getSessionValidator();
   const cookie = cookies().get(SESSION_COOKIE_NAME)?.value;
   if (!cookie) return NextResponse.json({ error: 'Session cookie missing' }, { status: 401 });
 
@@ -48,9 +56,9 @@ export async function POST(req: Request) {
     status: 'COMPLETED',
   };
 
-  const ok = validateSession(finalRecord);
+  const ok = validate(finalRecord);
   if (!ok) {
-    return NextResponse.json({ error: 'Session validation failed', details: validateSession.errors }, { status: 500 });
+    return NextResponse.json({ error: 'Session validation failed', details: validate.errors }, { status: 500 });
   }
 
   return NextResponse.json(finalRecord);
