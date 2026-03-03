@@ -1,0 +1,198 @@
+{
+  "scenarioId": "week3-lifecycle-reconstruction-detection-gaps",
+  "title": "Week 3: Attack Lifecycle Reconstruction — Detection Gap Identification",
+  "briefing": {
+    "narrative": "Over a 36-hour window, the university SOC observed scattered signals across email, identity, endpoint, and file services. No single artifact proves a complete intrusion chain, but leadership needs a plausible attack lifecycle reconstruction and clear detection priorities before expanding containment actions. Your task is to infer likely initial access, sequence key attacker phases, identify the most critical visibility gap, and choose practical mitigation breakpoints.",
+    "instructions": "Synthesize the evidence into a defensible timeline from initial access through impact potential. Distinguish corroborated steps from assumptions, account for misleading noise, and document decision tradeoffs. Complete the decision path, then select a primary hypothesis, risk level, and confidence level without assuming there is one guaranteed correct answer."
+  },
+  "evidence_items": [
+    {
+      "id": "E1",
+      "type": "timeline",
+      "content": "Sequence fragments (UTC): 08:12 inbound email with password-protected archive to Facilities coordinator; 08:19 user sign-in to M365 from normal campus IP; 08:27 same account grants OAuth consent to 'DocuView Sync'; 09:03 PowerShell starts on workstation FAC-WS-14 via WINWORD parent; 09:17 scheduled task 'OfficeUpdaterCheck' created; 10:11 SMB session from FAC-WS-14 to FILE-RSCH-02 using stolen token; 10:24 compressed archive staged in C:\\ProgramData\\temp\\fin_docs.7z; 10:31 outbound transfer attempt to cloud storage API blocked by firewall policy."
+    },
+    {
+      "id": "E2",
+      "type": "indicator",
+      "content": "Identity provider log: User j.hale@univ.edu completed MFA from known device, then within 9 minutes issued OAuth consent for appId 8f3c... with delegated Graph read/write mail and files permissions. Tenant policy logs show no admin approval workflow event for that app."
+    },
+    {
+      "id": "E3",
+      "type": "report",
+      "content": "Secure email gateway analysis: Message subject 'Updated Vendor Wiring Confirmation' used spoofed domain univ-vendor-payments.com and carried encrypted ZIP with invoice-themed lure. SPF failed, DKIM missing, but message bypassed quarantine due to user-level allow rule created 3 weeks earlier."
+    },
+    {
+      "id": "E4",
+      "type": "indicator",
+      "content": "Endpoint telemetry (FAC-WS-14): WINWORD.EXE spawned powershell.exe with encoded command retrieving script from hxxps://cdn-docs-share[.]com/api/v2/update. Script created scheduled task 'OfficeUpdaterCheck' every 30 minutes and added exclusion path C:\\ProgramData\\OfficeCache in local AV preferences."
+    },
+    {
+      "id": "E5",
+      "type": "statement",
+      "content": "AI triage copilot summary (automated, confidence medium): 'Likely credential phishing incident with no confirmed lateral movement; probable objective is mailbox collection.' The model notes gaps: no NetFlow from east-west segments and incomplete EDR process trees on two research hosts due to sensor health drift."
+    },
+    {
+      "id": "E6",
+      "type": "report",
+      "content": "File server audit report: FILE-RSCH-02 received Kerberos-authenticated SMB access from FAC-WS-14 service token linked to legacy backup role. Access touched 43 directories in 11 minutes, including grant-budget spreadsheets and two restricted lab collaboration folders; no file deletes recorded."
+    },
+    {
+      "id": "E7",
+      "type": "statement",
+      "content": "Network engineer note: East-west packet capture for research VLAN was disabled during sensor upgrade from 07:00-13:00, leaving no full packet visibility during the observed SMB pivot period. Firewall metadata retained only allow/deny summaries, not payload or command details."
+    },
+    {
+      "id": "E8",
+      "type": "indicator",
+      "content": "Authentication anomaly feed: Two failed RDP attempts from FAC-WS-14 to DC-AUTH-01 occurred after the SMB activity, followed by successful LDAP bind using the same backup service identity from FILE-RSCH-02."
+    },
+    {
+      "id": "E9",
+      "type": "report",
+      "content": "Campus social media monitoring: Anonymous post claimed 'campus ransomware tonight' and included a recycled screenshot from a 2022 unrelated incident at another school; no matching indicators or extortion contact details were provided."
+    },
+    {
+      "id": "E10",
+      "type": "timeline",
+      "content": "Host and identity alignment timeline: 08:27 OAuth consent granted; 09:03 malicious macro execution; 09:17 persistence task creation; 10:11 lateral SMB token use; 10:24 archive staging; 10:31 egress blocked. Potential impact appears to be data theft preparation rather than immediate encryption, but actual exfil volume cannot be confirmed from available telemetry."
+    }
+  ],
+  "decision_nodes": [
+    {
+      "id": "D3-01",
+      "prompt": "Most likely initial access vector?",
+      "recordInFinalScreen": false,
+      "options": [
+        {
+          "label": "User opened malicious invoice attachment leading to macro execution",
+          "nextNodeId": "D3-02"
+        },
+        {
+          "label": "OAuth consent abuse was the primary foothold, with host execution occurring later",
+          "nextNodeId": "D3-02"
+        },
+        {
+          "label": "Pre-existing compromised service account enabled access before user interaction",
+          "nextNodeId": "D3-02"
+        }
+      ]
+    },
+    {
+      "id": "D3-02",
+      "prompt": "Most likely persistence mechanism or foothold that sustained attacker access?",
+      "recordInFinalScreen": false,
+      "options": [
+        {
+          "label": "Scheduled task plus AV exclusion on FAC-WS-14 provided durable host persistence",
+          "nextNodeId": "D3-03"
+        },
+        {
+          "label": "Delegated OAuth app permissions maintained access to user data and tokens",
+          "nextNodeId": "D3-03"
+        },
+        {
+          "label": "Abuse of legacy backup service identity was the key long-lived foothold",
+          "nextNodeId": "D3-03"
+        }
+      ]
+    },
+    {
+      "id": "D3-03",
+      "prompt": "Most likely lateral movement path or target?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "FAC-WS-14 to FILE-RSCH-02 via SMB token reuse, then directory reconnaissance",
+          "nextNodeId": "D3-04"
+        },
+        {
+          "label": "Direct pivot to domain services for privilege escalation before file access",
+          "nextNodeId": "D3-04"
+        },
+        {
+          "label": "Cloud-to-cloud movement through OAuth scope abuse without meaningful host pivot",
+          "nextNodeId": "D3-04"
+        }
+      ]
+    },
+    {
+      "id": "D3-04",
+      "prompt": "What is the single most critical detection/visibility gap?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Loss of east-west packet visibility during the pivot window",
+          "nextNodeId": "D3-05"
+        },
+        {
+          "label": "No enforced admin consent controls for risky OAuth permissions",
+          "nextNodeId": "D3-05"
+        },
+        {
+          "label": "Incomplete endpoint lineage due to EDR sensor health drift",
+          "nextNodeId": "D3-05"
+        }
+      ]
+    },
+    {
+      "id": "D3-05",
+      "prompt": "Choose the best pair of mitigation breakpoints to disrupt this chain.",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Revoke suspicious OAuth grants + enforce conditional access/app consent policies",
+          "nextNodeId": null
+        },
+        {
+          "label": "Disable legacy backup service identity + segment SMB access from user workstations",
+          "nextNodeId": null
+        },
+        {
+          "label": "Block macro-enabled archives at gateway + harden script execution controls",
+          "nextNodeId": null
+        },
+        {
+          "label": "Restore east-west telemetry coverage + alert on rapid archive staging and egress attempts",
+          "nextNodeId": null
+        }
+      ]
+    }
+  ],
+  "required_final_selections": {
+    "primaryHypothesis": {
+      "mode": "options",
+      "options": [
+        "Phishing attachment execution established host persistence first, then token-assisted lateral movement to research file assets for staged exfiltration.",
+        "OAuth consent abuse was the primary entry and collection channel, with host artifacts representing secondary or opportunistic actions.",
+        "Compromise of a legacy service identity enabled most movement, while user-facing phishing artifacts were partial misdirection.",
+        "A blended intrusion combined user compromise and cloud app abuse, but incomplete telemetry prevents firm sequencing of pivot steps.",
+        "Multiple loosely related activities overlapped in time, creating an apparent lifecycle that may include one true intrusion and one noise stream."
+      ]
+    },
+    "riskLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ]
+    },
+    "confidenceLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    }
+  },
+  "downloadable_artifacts": [
+    {
+      "format": "JSON"
+    },
+    {
+      "format": "PDF"
+    }
+  ]
+}
