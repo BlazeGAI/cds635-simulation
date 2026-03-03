@@ -1,0 +1,125 @@
+{
+  "scenarioId": "week1-foundations-intelligence",
+  "title": "Week 1: Foundations of Intelligence — Indicator vs. Intelligence",
+  "briefing": {
+    "narrative": "Campus leadership has asked the SOC to assess whether recent cyber activity against university systems represents meaningful intelligence about an imminent adversary objective, or merely disconnected indicators. Your task is to distinguish raw signal from contextual noise and produce a defensible analytic judgment.",
+    "instructions": "Review each evidence item, note reliability and context, and avoid over-weighting single indicators. Follow branch prompts to document your analytic path before selecting a primary hypothesis, risk level, and confidence level."
+  },
+  "evidence_items": [
+    {
+      "id": "E1",
+      "type": "indicator",
+      "content": "EDR alert: Three failed admin logins to an exposed VPN portal from IP 185.228.168.44 over 4 minutes; account lockout triggered."
+    },
+    {
+      "id": "E2",
+      "type": "report",
+      "content": "Threat intel bulletin (last 72h): Education sector targeted by credential-harvesting campaigns using cloned SSO portals and urgent payroll lures."
+    },
+    {
+      "id": "E3",
+      "type": "statement",
+      "content": "Helpdesk note: Two faculty reported a payroll email 'that looked strange' but neither submitted credentials and both deleted the message."
+    },
+    {
+      "id": "E4",
+      "type": "timeline",
+      "content": "07:45 suspicious login attempts; 08:10 phishing reports; 08:30 no abnormal outbound traffic on perimeter netflow; 09:00 HR confirms no payroll message was sent."
+    },
+    {
+      "id": "E5",
+      "type": "indicator",
+      "content": "Domain monitoring: Newly registered domain 'univ-payroll-secure.com' uses privacy shielding and was created 1 day ago."
+    },
+    {
+      "id": "E6",
+      "type": "report",
+      "content": "Internal vuln scan shows one outdated VPN appliance in a research subnet, but no active exploit telemetry in the last 24 hours."
+    },
+    {
+      "id": "E7",
+      "type": "statement",
+      "content": "Student forum rumor claims 'campus network is already breached' with no technical evidence attached."
+    },
+    {
+      "id": "E8",
+      "type": "indicator",
+      "content": "Mail gateway blocked 47 messages matching known phishing template hash tied to prior commodity phishing kits."
+    }
+  ],
+  "decision_nodes": [
+    {
+      "id": "D1",
+      "prompt": "Which lead should be prioritized first?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Prioritize phishing infrastructure investigation",
+          "nextNodeId": "D2"
+        },
+        {
+          "label": "Prioritize authentication log anomaly review",
+          "nextNodeId": "D3"
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "prompt": "Phishing lead: what does current evidence most strongly indicate?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Likely broad credential-harvesting attempt with limited compromise evidence",
+          "nextNodeId": "D4"
+        },
+        {
+          "label": "Likely targeted intrusion already in progress",
+          "nextNodeId": "D4"
+        }
+      ]
+    },
+    {
+      "id": "D3",
+      "prompt": "Authentication lead: how should failed VPN logins be interpreted right now?",
+      "recordInFinalScreen": false,
+      "options": [
+        {
+          "label": "Preliminary probing activity; insufficient evidence of successful access",
+          "nextNodeId": "D4"
+        },
+        {
+          "label": "Strong evidence of active privileged compromise",
+          "nextNodeId": "D4"
+        }
+      ]
+    },
+    {
+      "id": "D4",
+      "prompt": "What immediate analytic action best reduces uncertainty before final assessment?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Request rapid user-impact sampling and SSO telemetry correlation",
+          "nextNodeId": null
+        },
+        {
+          "label": "Escalate directly to incident declaration without additional validation",
+          "nextNodeId": null
+        }
+      ]
+    }
+  ],
+  "required_final_selections": {
+    "primaryHypothesis": "Current activity is primarily a phishing-driven indicator set; intelligence suggests elevated threat interest but not confirmed enterprise compromise.",
+    "riskLevel": "Medium",
+    "confidenceLevel": "Medium"
+  },
+  "downloadable_artifacts": [
+    {
+      "format": "JSON"
+    },
+    {
+      "format": "PDF"
+    }
+  ]
+}
