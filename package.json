@@ -1,0 +1,7 @@
+{
+  "name": "cds635-simulation",
+  "private": true,
+  "scripts": {
+    "validate:scenarios": "node scripts/validate-scenarios.js"
+  }
+}
