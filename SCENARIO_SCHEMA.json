@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CDS635 Simulation Scenario Schema",
+  "description": "Schema for scenario configuration derived from SIMULATION_SPEC.md sections 5, 6.2, 6.3, 6.4, 6.5, and 12.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scenarioId",
+    "title",
+    "briefing",
+    "evidence_items",
+    "decision_nodes",
+    "required_final_selections",
+    "downloadable_artifacts"
+  ],
+  "properties": {
+    "scenarioId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Scenario identifier for session creation and progression (Sections 5 and 8.1)."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Scenario title shown in briefing and persistent context display (Sections 6.1 and 6.2)."
+    },
+    "briefing": {
+      "type": "object",
+      "description": "Scenario briefing content structure for Screen A: Scenario Briefing (Section 6.2).",
+      "additionalProperties": false,
+      "required": [
+        "narrative",
+        "instructions"
+      ],
+      "properties": {
+        "narrative": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Briefing narrative introducing scenario context and mission objective (Section 6.2)."
+        },
+        "instructions": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Brief instructions emphasizing structured analytic reasoning (Section 6.2)."
+        }
+      }
+    },
+    "evidence_items": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Evidence Review content including reports, indicators, timelines, and statements (Section 6.3).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "content"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique evidence item identifier for inspection and analysis flow (Section 6.3)."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "report",
+              "indicator",
+              "timeline",
+              "statement"
+            ],
+            "description": "Evidence item category aligned to listed evidence forms in Evidence Review (Section 6.3)."
+          },
+          "content": {
+            "description": "Evidence content displayed to the student for comparison and synthesis (Section 6.3).",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {}
+              }
+            ]
+          }
+        }
+      }
+    },
+    "decision_nodes": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Decision flow nodes supporting branching decisions and recording behavior (Sections 6.3, 6.5, and 7.2).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "prompt",
+          "recordInFinalScreen",
+          "options"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Decision node identifier used for branch decision capture (Sections 6.3 and 8.2)."
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Decision prompt text presented for branch or assessment choice (Sections 6.3 and 8.2)."
+          },
+          "recordInFinalScreen": {
+            "type": "boolean",
+            "description": "Marks decisions that must appear in final completion output as branching decisions (Sections 6.5 and 12)."
+          },
+          "options": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "label",
+                "nextNodeId"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Option text available for selection in a decision prompt (Sections 6.3 and 8.2)."
+                },
+                "nextNodeId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "description": "Next decision node identifier, or null for terminal branch path (Section 7.2)."
+                }
+              }
+            },
+            "description": "Selectable options for the decision node, including branching behavior (Sections 6.3 and 7.2)."
+          }
+        }
+      }
+    },
+    "required_final_selections": {
+      "type": "object",
+      "description": "Mandatory analytical judgments required before completion (Sections 6.4 and 7.3).",
+      "additionalProperties": false,
+      "required": [
+        "primaryHypothesis",
+        "riskLevel",
+        "confidenceLevel"
+      ],
+      "properties": {
+        "primaryHypothesis": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Primary hypothesis selection required at completion (Sections 6.4 and 7.3)."
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": [
+            "Low",
+            "Medium",
+            "High",
+            "Critical"
+          ],
+          "description": "Required risk level enumeration (Sections 6.4 and 7.3)."
+        },
+        "confidenceLevel": {
+          "type": "string",
+          "enum": [
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "description": "Required confidence level enumeration (Sections 6.4 and 7.3)."
+        }
+      }
+    },
+    "downloadable_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Downloadable artifact definitions for completion evidence output (Sections 6.5 and 9.6).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "format"
+        ],
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": [
+              "JSON",
+              "PDF",
+              "TXT"
+            ],
+            "description": "Artifact format aligned to allowed output types (Section 9.6)."
+          }
+        }
+      }
+    }
+  }
+}
