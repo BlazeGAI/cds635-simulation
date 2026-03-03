@@ -1,0 +1,182 @@
+{
+  "scenarioId": "week2-adversarial-modeling-threat-profiling",
+  "title": "Week 2: Adversarial Modeling — Threat Actor Profiling Under Uncertainty",
+  "briefing": {
+    "narrative": "Over the past 36 hours, the university SOC has observed scattered activity across finance, research, and public web systems. Some indicators could reflect opportunistic cybercrime, while others suggest a more tailored campaign. Intelligence from partners is partial and occasionally contradictory.",
+    "instructions": "Your mission is to produce an operationally useful adversary profile and justify near-term decisions despite uncertainty. Build a defensible judgment about actor type, intent, capability, and likely next move. Multiple interpretations may be valid if supported by evidence quality and context. Respect legal/privacy boundaries and avoid overcommitting to single-source reporting."
+  },
+  "evidence_items": [
+    {
+      "id": "E1",
+      "type": "report",
+      "content": "Regional fusion center intel snippet: A financially motivated intrusion set has recently pivoted from municipal governments to higher-ed procurement portals, often beginning with vendor impersonation and payment-change fraud attempts. Confidence: moderate."
+    },
+    {
+      "id": "E2",
+      "type": "indicator",
+      "content": "SIEM alert: Service account 'fin-api-sync' authenticated from a new ASN at 02:14 UTC, then queried 1,842 invoice records in 11 minutes; token revoked automatically after impossible-travel policy fired."
+    },
+    {
+      "id": "E3",
+      "type": "statement",
+      "content": "Controller's office message: Two departments received urgent requests to 'reconfirm ACH details' from a lookalike domain. One employee clicked but reports no credential entry."
+    },
+    {
+      "id": "E4",
+      "type": "timeline",
+      "content": "12:40 suspicious OAuth consent grant to third-party app; 13:05 abnormal mailbox forwarding rule created; 13:22 outbound email volume returns to baseline; 14:10 no confirmed funds transfer anomalies."
+    },
+    {
+      "id": "E5",
+      "type": "report",
+      "content": "Automated AI summary from case-assist tool (draft, incomplete): 'Pattern appears closest to business-email-compromise playbook with moderate chance of follow-on fraud.' Note: model lacked endpoint telemetry from research subnet and did not score for insider collusion indicators."
+    },
+    {
+      "id": "E6",
+      "type": "indicator",
+      "content": "Web application firewall alert: Repeated SQLi probes against grants portal from rotating residential proxies; payload quality appears low and mostly blocked."
+    },
+    {
+      "id": "E7",
+      "type": "report",
+      "content": "ISAC partner report: A state-linked collection actor recently targeted university biotech labs using credential theft followed by selective file staging. TTP overlap with current case is limited to one commodity phishing lure."
+    },
+    {
+      "id": "E8",
+      "type": "statement",
+      "content": "Graduate IT assistant says a former contractor's badge was seen near restricted research offices after access expiration, but facilities logs have not yet confirmed entry."
+    },
+    {
+      "id": "E9",
+      "type": "indicator",
+      "content": "Email security gateway quarantined 63 messages containing invoice-themed attachment macros; 61 were blocked before delivery, 2 reached user inboxes and were unopened."
+    },
+    {
+      "id": "E10",
+      "type": "timeline",
+      "content": "Day -1: vendor change-request phishing wave; Day 0 morning: service-account anomaly; Day 0 afternoon: low-grade grants portal probing; Day 0 evening: no confirmed ransomware detonation or destructive actions."
+    }
+  ],
+  "decision_nodes": [
+    {
+      "id": "D1",
+      "prompt": "Which actor profile should drive immediate collection priorities?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Prioritize financially motivated fraud actor model",
+          "nextNodeId": "D2"
+        },
+        {
+          "label": "Prioritize state-linked espionage actor model",
+          "nextNodeId": "D3"
+        },
+        {
+          "label": "Prioritize mixed/uncertain actor model with parallel tracks",
+          "nextNodeId": "D4"
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "prompt": "If fraud-motivated activity is primary, what is the most likely next move in the next 24 hours?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Attempt payment redirection using compromised mailbox trust",
+          "nextNodeId": "D5"
+        },
+        {
+          "label": "Shift to credential resale with minimal direct fraud execution",
+          "nextNodeId": "D5"
+        }
+      ]
+    },
+    {
+      "id": "D3",
+      "prompt": "If espionage is primary, which capability assessment is most defensible now?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Moderate capability with opportunistic initial access and selective follow-on targeting",
+          "nextNodeId": "D5"
+        },
+        {
+          "label": "High capability with coordinated multi-domain access already established",
+          "nextNodeId": "D5"
+        }
+      ]
+    },
+    {
+      "id": "D4",
+      "prompt": "If actor identity remains uncertain, which uncertainty-reduction action best balances speed and disruption?",
+      "recordInFinalScreen": false,
+      "options": [
+        {
+          "label": "Correlate identity, email, and finance-system telemetry before broad containment",
+          "nextNodeId": "D5"
+        },
+        {
+          "label": "Initiate maximal containment across finance and research immediately",
+          "nextNodeId": "D5"
+        }
+      ]
+    },
+    {
+      "id": "D5",
+      "prompt": "What operational posture should leadership adopt pending new evidence?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Focused heightened monitoring with pre-approved fraud interruption triggers",
+          "nextNodeId": null
+        },
+        {
+          "label": "Enterprise incident escalation with cross-functional command activation",
+          "nextNodeId": null
+        },
+        {
+          "label": "Limited watch posture while collecting additional corroboration",
+          "nextNodeId": null
+        }
+      ]
+    }
+  ],
+  "required_final_selections": {
+    "primaryHypothesis": {
+      "mode": "options",
+      "options": [
+        "Primarily financially motivated actor pursuing payment fraud via mailbox compromise",
+        "Primarily espionage-oriented actor seeking selective research collection",
+        "Hacktivist-leaning disruptive actor using opportunistic probing and messaging pressure",
+        "Insider-enabled external campaign combining social engineering with privileged misuse",
+        "Blended opportunistic activity from multiple unrelated actors without central coordination"
+      ]
+    },
+    "riskLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ]
+    },
+    "confidenceLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    }
+  },
+  "downloadable_artifacts": [
+    {
+      "format": "JSON"
+    },
+    {
+      "format": "PDF"
+    }
+  ]
+}
