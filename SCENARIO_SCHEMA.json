@@ -159,9 +159,72 @@
       ],
       "properties": {
         "primaryHypothesis": {
-          "type": "string",
-          "minLength": 1,
-          "description": "Primary hypothesis selection required at completion (Sections 6.4 and 7.3)."
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "options",
+                "freeText"
+              ]
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "minLength": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "mode": {
+                    "const": "options"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "options"
+                ],
+                "properties": {
+                  "options": {
+                    "minItems": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "mode": {
+                    "const": "freeText"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "minLength"
+                ],
+                "properties": {
+                  "minLength": {
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          ]
         },
         "riskLevel": {
           "type": "string",
