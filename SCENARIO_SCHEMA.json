@@ -75,16 +75,8 @@
           },
           "content": {
             "description": "Evidence content displayed to the student for comparison and synthesis (Section 6.3).",
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {}
-              }
-            ]
+            "type": "string",
+            "minLength": 1
           }
         }
       }
@@ -134,11 +126,15 @@
                   "description": "Option text available for selection in a decision prompt (Sections 6.3 and 8.2)."
                 },
                 "nextNodeId": {
-                  "type": [
-                    "string",
-                    "null"
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "null"
+                    }
                   ],
-                  "minLength": 1,
                   "description": "Next decision node identifier, or null for terminal branch path (Section 7.2)."
                 }
               }
@@ -192,7 +188,10 @@
                   "mode": {
                     "const": "options"
                   }
-                }
+                },
+                "required": [
+                  "mode"
+                ]
               },
               "then": {
                 "required": [
@@ -202,6 +201,11 @@
                   "options": {
                     "minItems": 1
                   }
+                },
+                "not": {
+                  "required": [
+                    "minLength"
+                  ]
                 }
               }
             },
@@ -211,7 +215,10 @@
                   "mode": {
                     "const": "freeText"
                   }
-                }
+                },
+                "required": [
+                  "mode"
+                ]
               },
               "then": {
                 "required": [
@@ -221,29 +228,70 @@
                   "minLength": {
                     "minimum": 1
                   }
+                },
+                "not": {
+                  "required": [
+                    "options"
+                  ]
                 }
               }
             }
           ]
         },
         "riskLevel": {
-          "type": "string",
-          "enum": [
-            "Low",
-            "Medium",
-            "High",
-            "Critical"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "allowed"
           ],
-          "description": "Required risk level enumeration (Sections 6.4 and 7.3)."
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "enum"
+            },
+            "allowed": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Low",
+                  "Medium",
+                  "High",
+                  "Critical"
+                ]
+              },
+              "minItems": 4,
+              "maxItems": 4
+            }
+          }
         },
         "confidenceLevel": {
-          "type": "string",
-          "enum": [
-            "Low",
-            "Medium",
-            "High"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "allowed"
           ],
-          "description": "Required confidence level enumeration (Sections 6.4 and 7.3)."
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "enum"
+            },
+            "allowed": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Low",
+                  "Medium",
+                  "High"
+                ]
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          }
         }
       }
     },
