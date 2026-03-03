@@ -1,0 +1,201 @@
+{
+  "scenarioId": "week4-detection-engineering-reasoning",
+  "title": "Week 4: Detection Engineering Reasoning — SIEM Evaluation and Alert Tuning",
+  "briefing": {
+    "narrative": "The university SOC has seen a sharp rise in SIEM alerts tied to authentication failures, script execution, and outbound DNS anomalies in the same 24-hour period. Leadership wants to know whether this is mostly noisy operational activity, a stealthy intrusion signal being diluted by telemetry quality issues, or both. Your task is to evaluate rule logic, alert quality, and defensible tuning choices while balancing false positives against false negatives.",
+    "instructions": "Review each evidence item for detection logic quality, data reliability, and operational context. Distinguish likely noise from meaningful signal, identify one critical visibility gap, and choose a pragmatic tuning action plus a short-term containment or monitoring step. Multiple outcomes can be defensible if your reasoning is coherent and risk-aware."
+  },
+  "evidence_items": [
+    {
+      "id": "E1",
+      "type": "report",
+      "content": "SIEM rule card excerpt (RULE-ATH-221): Trigger when failed_logins >= 8 for same user within 10 minutes AND source_country != \"US\". Fields used: user, src_ip, source_country, failure_reason, host. Suppression: none. Current threshold review note: legacy value from prior semester; remote-learning travel exceptions not encoded."
+    },
+    {
+      "id": "E2",
+      "type": "timeline",
+      "content": "Alert stream sample: 09:12:04 RULE-ATH-221 user=jhansen src_ip=203.0.113.54 country=NL failures=9 host=VPN-GW-01; 09:13:18 RULE-ATH-221 user=jhansen src_ip=203.0.113.54 country=NL failures=11 host=VPN-GW-01; 09:16:40 RULE-PSH-334 host=BIO-LAB-WS17 parent=powershell.exe child=Invoke-WebRequest score=72; 09:18:02 RULE-DNS-410 host=backup-srv03 queried_domain=cdn-update-check.net count=146/15m; 09:19:11 RULE-DNS-410 host=backup-srv03 queried_domain=cdn-update-check.net count=152/15m."
+    },
+    {
+      "id": "E3",
+      "type": "statement",
+      "content": "Telemetry quality note from SIEM engineer: process.command_line is null on ~38% of Windows endpoints after last agent update; hostname normalization differs across sources (BIO-LAB-WS17 vs bio-lab-ws17.ad.univ.local); DNS sensor only covers core VLANs and excludes two research subnets."
+    },
+    {
+      "id": "E4",
+      "type": "statement",
+      "content": "Analyst shift note: RULE-ATH-221 produced frequent false positives during faculty travel and study-abroad periods; many events involve repeated password manager retries after MFA timeout, especially for VPN users with stale mobile push registrations."
+    },
+    {
+      "id": "E5",
+      "type": "report",
+      "content": "AI system summary (auto-generated triage): \"Confidence medium-high that authentication attack is primary incident. Repeated foreign failures likely indicate credential stuffing campaign. Recommend immediate user lockouts and escalation to major incident.\" Limitation: summary did not ingest maintenance calendar or endpoint command-line completeness metrics."
+    },
+    {
+      "id": "E6",
+      "type": "timeline",
+      "content": "Change/operations calendar excerpt: 09:00-11:00 scheduled vulnerability scan from sec-scan-02 against VPN and identity endpoints; 09:05 backup verification job on backup-srv03 runs scripted domain reputation checks every 5 minutes; 09:15 endpoint agent phased upgrade on Life Sciences OU."
+    },
+    {
+      "id": "E7",
+      "type": "indicator",
+      "content": "Endpoint detail from BIO-LAB-WS17: powershell.exe spawned by winword.exe from user context with encoded command fragment and outbound connection to 198.51.100.77:443; process tree lacks full command line due to null field but parent-child chain and network metadata are present."
+    },
+    {
+      "id": "E8",
+      "type": "report",
+      "content": "Threat intel update (48h): multiple universities observed low-volume phishing leading to token theft, followed by quiet use of legitimate cloud and DNS-over-HTTPS lookups for staging; known infrastructure overlaps partially with 198.51.100.0/24 but includes many false-attribution clusters."
+    },
+    {
+      "id": "E9",
+      "type": "statement",
+      "content": "IR lead note: no confirmed data exfiltration yet, but NetFlow retention is only 24 hours for research edge and cloud audit ingestion is delayed by ~2 hours, reducing ability to correlate endpoint execution with SaaS access in near real time."
+    },
+    {
+      "id": "E10",
+      "type": "indicator",
+      "content": "Identity telemetry sample: jhansen had successful MFA-backed login from campus IP at 08:58, then failures from NL at 09:12-09:13, then successful login from same campus subnet at 09:21 via known managed device. No impossible-travel rule fired because identity provider geolocation enrichment timed out."
+    }
+  ],
+  "decision_nodes": [
+    {
+      "id": "D4-01",
+      "prompt": "Which current alert stream is most likely to contain meaningful malicious signal versus mostly operational noise?",
+      "recordInFinalScreen": false,
+      "options": [
+        {
+          "label": "Prioritize endpoint script execution on BIO-LAB-WS17 as higher-signal; treat most auth and DNS spikes as potentially noisy until correlated.",
+          "nextNodeId": "D4-02A"
+        },
+        {
+          "label": "Prioritize repeated foreign authentication failures as primary signal; treat endpoint and DNS artifacts as secondary noise for now.",
+          "nextNodeId": "D4-02B"
+        }
+      ]
+    },
+    {
+      "id": "D4-02A",
+      "prompt": "Given your prioritization, what is the most likely reason the SIEM is producing noise or missing signal?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Rule thresholds and suppressions are outdated for current operations, and field completeness issues reduce precision for endpoint detections.",
+          "nextNodeId": "D4-03"
+        },
+        {
+          "label": "The AI summary is sufficiently reliable, so operational context should be de-emphasized in favor of rapid lockout actions.",
+          "nextNodeId": "D4-03"
+        }
+      ]
+    },
+    {
+      "id": "D4-02B",
+      "prompt": "Given your prioritization, what is the most likely reason the SIEM is producing noise or missing signal?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Authentication rule logic overweights geography and ignores recent trusted-session context, inflating false positives.",
+          "nextNodeId": "D4-03"
+        },
+        {
+          "label": "Noise is minimal; current detections already balance sensitivity and specificity effectively.",
+          "nextNodeId": "D4-03"
+        }
+      ]
+    },
+    {
+      "id": "D4-03",
+      "prompt": "What is the most critical detection or visibility gap to address first?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Incomplete process command-line telemetry on endpoints, which weakens triage of script-based execution alerts.",
+          "nextNodeId": "D4-04"
+        },
+        {
+          "label": "Partial DNS coverage and delayed cloud audit logs, which can hide low-noise command-and-control or staging behavior.",
+          "nextNodeId": "D4-04"
+        },
+        {
+          "label": "Inconsistent hostname normalization across tools, which impairs reliable cross-source correlation.",
+          "nextNodeId": "D4-04"
+        }
+      ]
+    },
+    {
+      "id": "D4-04",
+      "prompt": "What is the most defensible tuning action right now, considering false-positive and false-negative tradeoffs?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Tune RULE-ATH-221 by adding trusted-session and managed-device context plus short suppression windows for known scanner IPs; keep alerting but lower priority when corroboration is absent.",
+          "nextNodeId": "D4-05"
+        },
+        {
+          "label": "Increase all thresholds broadly to reduce analyst workload immediately, accepting higher risk of missed stealth activity.",
+          "nextNodeId": "D4-05"
+        },
+        {
+          "label": "Split endpoint script rule into high-confidence parent-child patterns versus low-confidence generic script use, with different severities and response queues.",
+          "nextNodeId": "D4-05"
+        }
+      ]
+    },
+    {
+      "id": "D4-05",
+      "prompt": "While tuning is applied, what is the best short-term containment or monitoring action?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Isolate BIO-LAB-WS17 from sensitive segments, force token revocation for impacted user accounts, and run focused hunt queries across recent script/network indicators.",
+          "nextNodeId": null
+        },
+        {
+          "label": "Deploy temporary watchlists for 198.51.100.77 and abnormal DNS burst hosts, with hourly analyst review and no immediate endpoint isolation.",
+          "nextNodeId": null
+        },
+        {
+          "label": "Pause containment and gather 24 more hours of baseline data before taking action to avoid disrupting operations.",
+          "nextNodeId": null
+        }
+      ]
+    }
+  ],
+  "required_final_selections": {
+    "primaryHypothesis": {
+      "mode": "options",
+      "options": [
+        "Benign administrative and scheduled operational activity is being misclassified due to outdated SIEM thresholds and weak context enrichment.",
+        "Credential abuse attempts are present, but strongest risk comes from a separate endpoint execution chain that could indicate early-stage compromise.",
+        "Low-volume malware beaconing or hands-on-keyboard activity is blending with routine noise, requiring targeted containment while telemetry gaps are fixed.",
+        "Data staging may be in progress across partially monitored segments, but current evidence is incomplete due to DNS and cloud visibility delays.",
+        "Multiple overlapping events include at least one true security incident and one operational noise stream, demanding split-track response and tuning."
+      ]
+    },
+    "riskLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ]
+    },
+    "confidenceLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    }
+  },
+  "downloadable_artifacts": [
+    {
+      "format": "JSON"
+    },
+    {
+      "format": "PDF"
+    }
+  ]
+}
