@@ -1,0 +1,198 @@
+{
+  "scenarioId": "week7-emerging-threats-ai-enabled-risk-outlook",
+  "title": "Week 7: Emerging Threats and AI-enabled Risk Outlook (Strategic Assessment)",
+  "briefing": {
+    "narrative": "University leadership has requested a strategic assessment after a fast-moving incident window involving identity anomalies, suspicious finance requests, and conflicting AI-generated analytic summaries. Security operations believes adversaries may be using AI to accelerate social engineering and operational tempo, but available telemetry includes significant blind spots and possible noise. Your task is to determine the most concerning threat vector, identify the highest strategic risk, and recommend the most defensible governance and detection improvements under uncertainty.",
+    "instructions": "Review all evidence for reliability, timing, and relevance to attacker speed/scale. Distinguish plausible adversary behavior from benign overlap, then document your reasoning through the decision path. Multiple interpretations may be defensible; prioritize analytic rigor and practical risk reduction when selecting your final hypothesis, risk level, and confidence level." 
+  },
+  "evidence_items": [
+    {
+      "id": "E7-01",
+      "type": "timeline",
+      "content": "Condensed event sequence (all local time): 08:06 CFO receives urgent voice call requesting same-day vendor payment reroute; 08:12 finance analyst receives follow-up email with revised wire instructions; 08:18 unusual OAuth consent granted to 'DocuSign-Archive-Helper'; 08:25 two impossible-travel sign-ins for finance controller account; 08:41 treasury portal payment batch paused after manual challenge; 09:03 SOC opens investigation after correlated identity and email alerts."
+    },
+    {
+      "id": "E7-02",
+      "type": "report",
+      "content": "Cloud/IAM telemetry extract (plain text):\n2026-03-11T08:17:55Z eventName=AddOAuth2PermissionGrant user=fin.controller app=DocuSign-Archive-Helper scopes='Mail.Read Files.Read offline_access' ip=198.51.100.72 userAgent='Mozilla/5.0 (Windows NT 10.0)' result=Success\n2026-03-11T08:22:10Z eventName=UpdateApplicationCredentials actor=svc-workflow-admin targetApp=treasury-automation credentialType=clientSecret result=Success changeTicket=NONE\n2026-03-11T08:24:43Z eventName=AssumeRole role=FinanceDataExportRole principal=svc-workflow-admin sourceIp=203.0.113.9 mfaAuthenticated=false result=Success\n2026-03-11T08:27:05Z eventName=CreateMailboxRule user=fin.controller rule='move external invoice mail to RSS Feeds' result=Success"
+    },
+    {
+      "id": "E7-03",
+      "type": "statement",
+      "content": "AI-enabled social engineering artifact: Executive assistant reports caller used the CFO's voice cadence, pet-name for treasury lead, and referenced a real conference itinerary not yet public. Call asked for 'silent expedite' of a $486,000 wire to a new account due to 'acquisition NDA timing.' Voice message clip reviewed by media team sounded authentic but had slight prosody glitches on repeated words."
+    },
+    {
+      "id": "E7-04",
+      "type": "statement",
+      "content": "Detection limitation note: Identity provider retains detailed token telemetry for only 7 days on current license tier, and endpoint telemetry for three finance laptops is missing between 07:50-09:20 due to sensor update rollback. No packet capture exists for outbound SaaS API traffic, limiting confirmation of data access versus token misuse intent."
+    },
+    {
+      "id": "E7-05",
+      "type": "report",
+      "content": "AI system summary (internal copilot triage): 'Highest-likelihood explanation is isolated BEC attempt with no confirmed account compromise. Recommend monitor-only response.' Model confidence listed as 0.91. Footnote indicates model ingested SIEM alert metadata and email gateway logs, but did not ingest IAM admin audit events or voice-forensics notes due to connector timeout."
+    },
+    {
+      "id": "E7-06",
+      "type": "report",
+      "content": "Governance/policy constraint artifact: Quarterly audit exception register shows 14 active exemptions for MFA on legacy finance automation accounts, including svc-workflow-admin. Change-control policy permits emergency app credential rotation by single approver during business hours; after-hours approvals can be retroactively documented within 48 hours."
+    },
+    {
+      "id": "E7-07",
+      "type": "indicator",
+      "content": "Potential benign/noise candidate: Facilities IT deployed a new badge-reader integration at 08:00 that generated 1,900 authentication events and multiple impossible-travel false positives from shared test accounts mapped to an outdated geolocation table."
+    },
+    {
+      "id": "E7-08",
+      "type": "report",
+      "content": "Risk context artifact: Treasury platform processes tuition disbursement, payroll clearing, and grant reimbursements across 11 partner institutions. A successful payment diversion or prolonged treasury outage during month-end would likely trigger contractual penalties, delayed payroll, and reportable financial control deficiencies under state oversight requirements."
+    },
+    {
+      "id": "E7-09",
+      "type": "indicator",
+      "content": "Email telemetry: Three finance users received near-identical spearphish messages generated in polished internal writing style, each with personalized references to current projects. Sender domains were newly registered look-alikes with valid SPF but no historical reputation. One message included an AI-generated PDF invoice with metadata showing creation tool 'GenCompose Studio v4.2'."
+    },
+    {
+      "id": "E7-10",
+      "type": "timeline",
+      "content": "External intelligence timing note: Sector ISAC alert (issued 06:30 same day) warned of financially motivated group using voice cloning plus rapid OAuth abuse to complete wire diversion inside 30-60 minutes before fraud teams can manually verify requests. Reported pattern includes mailbox rule tampering and emergency credential changes to automation apps."
+    }
+  ],
+  "decision_nodes": [
+    {
+      "id": "D7-01",
+      "prompt": "Which emerging threat vector is most concerning in this scenario?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "AI-enabled business email compromise combining deepfake voice pretext and SaaS identity abuse",
+          "nextNodeId": "D7-02"
+        },
+        {
+          "label": "Primarily legacy IAM governance weakness with opportunistic social engineering as a secondary factor",
+          "nextNodeId": "D7-03"
+        },
+        {
+          "label": "Mostly alert noise and process confusion with limited evidence of adversary follow-through",
+          "nextNodeId": "D7-03"
+        }
+      ]
+    },
+    {
+      "id": "D7-02",
+      "prompt": "What is the most likely attacker objective?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Fraud via rapid payment diversion before manual verification catches the change",
+          "nextNodeId": "D7-04"
+        },
+        {
+          "label": "Espionage through sustained access to finance and grant records",
+          "nextNodeId": "D7-04"
+        },
+        {
+          "label": "Extortion leverage by combining data theft claims with operational pressure",
+          "nextNodeId": "D7-04"
+        },
+        {
+          "label": "Disruption of treasury operations to cause cascading institutional impact",
+          "nextNodeId": "D7-04"
+        }
+      ]
+    },
+    {
+      "id": "D7-03",
+      "prompt": "If AI-enabled fraud is not the primary interpretation, what strategic risk vector is still highest?",
+      "recordInFinalScreen": false,
+      "options": [
+        {
+          "label": "Uncontrolled service-account privileges and weak approval controls in finance automation",
+          "nextNodeId": "D7-04"
+        },
+        {
+          "label": "Dependence on incomplete AI triage that can bias early executive decisions",
+          "nextNodeId": "D7-04"
+        },
+        {
+          "label": "Telemetry noise reducing analyst trust in high-consequence alerts",
+          "nextNodeId": "D7-04"
+        }
+      ]
+    },
+    {
+      "id": "D7-04",
+      "prompt": "What is the biggest detection/visibility gap that enables this threat?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Insufficient SaaS/IAM telemetry retention and limited token-level forensic visibility",
+          "nextNodeId": "D7-05"
+        },
+        {
+          "label": "Gaps in endpoint coverage during critical decision windows for finance users",
+          "nextNodeId": "D7-05"
+        },
+        {
+          "label": "Lack of integrated voice-fraud verification telemetry in SOC workflows",
+          "nextNodeId": "D7-05"
+        }
+      ]
+    },
+    {
+      "id": "D7-05",
+      "prompt": "What governance/control improvement is highest leverage over the next 90 days?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Eliminate MFA exceptions for finance automation identities, enforce two-person approval for app credential changes, and require cryptographic callback verification for treasury payment reroutes",
+          "nextNodeId": null
+        },
+        {
+          "label": "Prioritize analyst tooling only: expand AI triage prompts and defer control-policy changes until annual audit cycle",
+          "nextNodeId": null
+        },
+        {
+          "label": "Focus on user awareness campaign alone while maintaining current approval and identity exception model",
+          "nextNodeId": null
+        }
+      ]
+    }
+  ],
+  "required_final_selections": {
+    "primaryHypothesis": {
+      "mode": "options",
+      "options": [
+        "The highest strategic risk is AI-accelerated fraud: deepfake-enabled executive pretexting and rapid OAuth abuse are being combined to bypass human verification and divert treasury payments within a compressed decision window.",
+        "The strongest explanation is a governance-first failure: long-standing MFA and approval exceptions in finance automation created a high-impact attack surface that adversaries can exploit with or without advanced AI social engineering.",
+        "A blended threat is most plausible: adversaries used AI-generated social engineering to gain urgency and trust, then exploited IAM control gaps to establish mailbox and application-level persistence for follow-on fraud or espionage.",
+        "Operational noise and telemetry blind spots prevent definitive attribution of objective, but evidence still supports elevated institutional risk requiring immediate identity hardening and payment-verification controls.",
+        "The primary concern is strategic decision bias from incomplete AI triage outputs, which may systematically understate active compromise when critical data sources are missing during high-tempo incidents."
+      ]
+    },
+    "riskLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ]
+    },
+    "confidenceLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    }
+  },
+  "downloadable_artifacts": [
+    {
+      "format": "JSON"
+    },
+    {
+      "format": "PDF"
+    }
+  ]
+}
