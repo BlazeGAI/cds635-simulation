@@ -1,142 +1,154 @@
 {
-  "scenarioId": "week2-adversarial-modeling-threat-profiling",
+  "scenarioId": "week2-adversarial-modeling-profiling",
   "title": "Week 2: Adversarial Modeling — Threat Actor Profiling Under Uncertainty",
   "briefing": {
-    "narrative": "Over the past 36 hours, the university SOC has observed scattered activity across finance, research, and public web systems. Some indicators could reflect opportunistic cybercrime, while others suggest a more tailored campaign. Intelligence from partners is partial and occasionally contradictory.",
-    "instructions": "Your mission is to produce an operationally useful adversary profile and justify near-term decisions despite uncertainty. Build a defensible judgment about actor type, intent, capability, and likely next move. Multiple interpretations may be valid if supported by evidence quality and context. Respect legal/privacy boundaries and avoid overcommitting to single-source reporting."
+    "narrative": "The university SOC is investigating coordinated activity affecting finance, research, and identity systems. Leadership needs an operational threat actor profile now, even though evidence is mixed and some signals may be deceptive. Your task is to model likely adversary intent, assess practical capability, estimate the next move, and identify the collection plan that would most increase confidence.",
+    "instructions": "Evaluate each evidence item for relevance, source quality, and possible deception. Use the decision path to document your analytic reasoning under uncertainty. Avoid single-cause assumptions and produce a defensible final judgment on actor profile, risk, and confidence."
   },
   "evidence_items": [
     {
       "id": "E1",
       "type": "report",
-      "content": "Regional fusion center intel snippet: A financially motivated intrusion set has recently pivoted from municipal governments to higher-ed procurement portals, often beginning with vendor impersonation and payment-change fraud attempts. Confidence: moderate."
+      "content": "Regional intel summary (48h): Multiple higher-education organizations reported extortion emails following theft of procurement records. In two cases, initial access was traced to contractor VPN credentials reused from prior breaches; one case may involve data brokerage by a third-party criminal access provider."
     },
     {
       "id": "E2",
       "type": "indicator",
-      "content": "SIEM alert: Service account 'fin-api-sync' authenticated from a new ASN at 02:14 UTC, then queried 1,842 invoice records in 11 minutes; token revoked automatically after impossible-travel policy fired."
+      "content": "SIEM alert artifact: Service account svc_backup authenticated successfully from a new ASN at 02:14 UTC, then queried three finance database tables and one grant-billing export. Query volume was low and timed between routine backup jobs."
     },
     {
       "id": "E3",
-      "type": "statement",
-      "content": "Controller's office message: Two departments received urgent requests to 'reconfirm ACH details' from a lookalike domain. One employee clicked but reports no credential entry."
+      "type": "timeline",
+      "content": "Observed sequence: 01:57 failed MFA push flood against two payroll admins; 02:14 unusual service account login; 02:26 outbound HTTPS session to newly observed cloud host; 03:05 account disabled by SOC; 09:10 anonymous message claims possession of donor records."
     },
     {
       "id": "E4",
-      "type": "timeline",
-      "content": "12:40 suspicious OAuth consent grant to third-party app; 13:05 abnormal mailbox forwarding rule created; 13:22 outbound email volume returns to baseline; 14:10 no confirmed funds transfer anomalies."
+      "type": "statement",
+      "content": "Procurement manager statement: A third-party maintenance vendor requested an emergency firewall rule change yesterday and insisted on email approval due to 'phone outage.' Change was denied pending verification."
     },
     {
       "id": "E5",
       "type": "report",
-      "content": "Automated AI summary from case-assist tool (draft, incomplete): 'Pattern appears closest to business-email-compromise playbook with moderate chance of follow-on fraud.' Note: model lacked endpoint telemetry from research subnet and did not score for insider collusion indicators."
+      "content": "AI triage system summary: Based on language style in the extortion note and overlap with known malware infrastructure, model rates 'financially motivated affiliate activity' as likely. However, confidence is moderate because metadata was incomplete and no malware payload has been recovered."
     },
     {
       "id": "E6",
       "type": "indicator",
-      "content": "Web application firewall alert: Repeated SQLi probes against grants portal from rotating residential proxies; payload quality appears low and mostly blocked."
+      "content": "Endpoint telemetry: No ransomware execution chain detected. One engineering workstation did run a signed remote administration tool not seen in this environment before; parent process history is partially missing due to log retention rollover."
     },
     {
       "id": "E7",
-      "type": "report",
-      "content": "ISAC partner report: A state-linked collection actor recently targeted university biotech labs using credential theft followed by selective file staging. TTP overlap with current case is limited to one commodity phishing lure."
+      "type": "statement",
+      "content": "Research IT lead note: A visiting scholar's account accessed two restricted biotech project folders from a familiar campus IP range, but access pattern was outside normal working hours and included unusually broad directory listing."
     },
     {
       "id": "E8",
-      "type": "statement",
-      "content": "Graduate IT assistant says a former contractor's badge was seen near restricted research offices after access expiration, but facilities logs have not yet confirmed entry."
+      "type": "report",
+      "content": "Open-source monitoring: A hacktivist channel posted broad anti-university rhetoric and listed this institution among 'complicit targets,' but provided no technical indicators, no claimed foothold details, and no data samples."
     },
     {
       "id": "E9",
       "type": "indicator",
-      "content": "Email security gateway quarantined 63 messages containing invoice-themed attachment macros; 61 were blocked before delivery, 2 reached user inboxes and were unopened."
+      "content": "Email security gateway artifact: Three inbound messages to Accounts Payable carried password-protected archives and referenced a real outstanding invoice number; attachment hashes are not yet in commercial threat feeds."
     },
     {
       "id": "E10",
       "type": "timeline",
-      "content": "Day -1: vendor change-request phishing wave; Day 0 morning: service-account anomaly; Day 0 afternoon: low-grade grants portal probing; Day 0 evening: no confirmed ransomware detonation or destructive actions."
+      "content": "Historical context timeline: Over the last 6 months, the university recorded two contractor credential exposures, one confirmed payroll phishing campaign, and no confirmed insider data theft cases; supply-chain software patching delays averaged 19 days in the research network."
     }
   ],
   "decision_nodes": [
     {
       "id": "D1",
-      "prompt": "Which actor profile should drive immediate collection priorities?",
+      "prompt": "Given current evidence, which actor objective appears most likely right now?",
       "recordInFinalScreen": true,
       "options": [
         {
-          "label": "Prioritize financially motivated fraud actor model",
+          "label": "Financial gain through extortion or data monetization",
           "nextNodeId": "D2"
         },
         {
-          "label": "Prioritize state-linked espionage actor model",
-          "nextNodeId": "D3"
+          "label": "Strategic intelligence collection aligned with espionage interests",
+          "nextNodeId": "D2"
         },
         {
-          "label": "Prioritize mixed/uncertain actor model with parallel tracks",
-          "nextNodeId": "D4"
+          "label": "Disruption or influence activity with hacktivist framing",
+          "nextNodeId": "D2"
         }
       ]
     },
     {
       "id": "D2",
-      "prompt": "If fraud-motivated activity is primary, what is the most likely next move in the next 24 hours?",
+      "prompt": "How should the adversary's capability and access sophistication be assessed at this stage?",
       "recordInFinalScreen": true,
       "options": [
         {
-          "label": "Attempt payment redirection using compromised mailbox trust",
-          "nextNodeId": "D5"
+          "label": "Moderate capability: opportunistic tradecraft plus potentially purchased access",
+          "nextNodeId": "D3"
         },
         {
-          "label": "Shift to credential resale with minimal direct fraud execution",
-          "nextNodeId": "D5"
+          "label": "High capability: coordinated multi-vector operation with disciplined OPSEC",
+          "nextNodeId": "D3"
+        },
+        {
+          "label": "Uncertain/fragmented capability: mixed signals could reflect multiple unrelated actors",
+          "nextNodeId": "D3"
         }
       ]
     },
     {
       "id": "D3",
-      "prompt": "If espionage is primary, which capability assessment is most defensible now?",
+      "prompt": "What is the most plausible next move in the next 24-72 hours?",
       "recordInFinalScreen": true,
       "options": [
         {
-          "label": "Moderate capability with opportunistic initial access and selective follow-on targeting",
-          "nextNodeId": "D5"
+          "label": "Follow-on credential operations to expand privileged access before overt action",
+          "nextNodeId": "D4"
         },
         {
-          "label": "High capability with coordinated multi-domain access already established",
-          "nextNodeId": "D5"
+          "label": "Targeted data staging and selective leak threats to pressure payment",
+          "nextNodeId": "D4"
+        },
+        {
+          "label": "Narrative amplification and public claims without significant technical escalation",
+          "nextNodeId": "D4"
         }
       ]
     },
     {
       "id": "D4",
-      "prompt": "If actor identity remains uncertain, which uncertainty-reduction action best balances speed and disruption?",
-      "recordInFinalScreen": false,
+      "prompt": "Which additional collection requirement would most increase analytic confidence now?",
+      "recordInFinalScreen": true,
       "options": [
         {
-          "label": "Correlate identity, email, and finance-system telemetry before broad containment",
+          "label": "Correlate identity logs, contractor VPN telemetry, and privileged service-account token history",
           "nextNodeId": "D5"
         },
         {
-          "label": "Initiate maximal containment across finance and research immediately",
+          "label": "Acquire cloud egress packet metadata and endpoint process lineage for suspected hosts",
+          "nextNodeId": "D5"
+        },
+        {
+          "label": "Prioritize HUMINT/vendor verification on recent access-change requests and support channels",
           "nextNodeId": "D5"
         }
       ]
     },
     {
       "id": "D5",
-      "prompt": "What operational posture should leadership adopt pending new evidence?",
+      "prompt": "What immediate mitigation priority best matches uncertainty and potential impact?",
       "recordInFinalScreen": true,
       "options": [
         {
-          "label": "Focused heightened monitoring with pre-approved fraud interruption triggers",
+          "label": "Constrain privileged pathways (conditional access, token revocation, segmented admin workflows)",
           "nextNodeId": null
         },
         {
-          "label": "Enterprise incident escalation with cross-functional command activation",
+          "label": "Focus on data-loss controls and legal/comms preparation for possible extortion escalation",
           "nextNodeId": null
         },
         {
-          "label": "Limited watch posture while collecting additional corroboration",
+          "label": "Execute broad resilience posture uplift while preserving evidence for attribution refinement",
           "nextNodeId": null
         }
       ]
@@ -146,11 +158,10 @@
     "primaryHypothesis": {
       "mode": "options",
       "options": [
-        "Primarily financially motivated actor pursuing payment fraud via mailbox compromise",
-        "Primarily espionage-oriented actor seeking selective research collection",
-        "Hacktivist-leaning disruptive actor using opportunistic probing and messaging pressure",
-        "Insider-enabled external campaign combining social engineering with privileged misuse",
-        "Blended opportunistic activity from multiple unrelated actors without central coordination"
+        "Financially motivated actor leveraging mixed initial-access methods, possibly including access brokers",
+        "Espionage-oriented actor using selective low-noise collection with potential insider-assisted knowledge",
+        "Hybrid activity where public hacktivist signaling masks criminal or supply-chain-enabled objectives",
+        "Multiple concurrent actor sets producing overlapping artifacts and ambiguous intent signals"
       ]
     },
     "riskLevel": {
