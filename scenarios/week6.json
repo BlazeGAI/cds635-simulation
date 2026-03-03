@@ -1,0 +1,249 @@
+{
+  "scenarioId": "week6-integrated-capstone-outcome-assessment",
+  "title": "Week 6: Integrated Capstone (Outcome Assessment) — Multi-Source Threat Scenario Analysis and Risk Prioritization",
+  "briefing": {
+    "narrative": "The university SOC is conducting an outcome-focused capstone assessment after a suspected multi-stage compromise affecting email, identity, endpoint, and research data systems. Leadership needs an integrated narrative that explains what most likely happened, what evidence is signal versus noise, and which response priorities most reduce institutional risk. Available telemetry is incomplete in key places, and several artifacts may support more than one defensible interpretation.",
+    "instructions": "Reconstruct an end-to-end intrusion narrative from mixed evidence sources. Distinguish high-value indicators from operational noise, select the primary hypothesis that best explains the compromise path, assign risk and confidence, identify the most critical detection failure, and prioritize high-impact mitigations. Multiple interpretations are possible; focus on analytic defensibility rather than certainty."
+  },
+  "evidence_items": [
+    {
+      "id": "E6-01",
+      "type": "report",
+      "content": "Email gateway summary (FIN-Accounts mailbox campaign): 26 messages delivered, 11 quarantined. Subject line themed as 'Urgent Vendor Payment Reconciliation'. Header review shows SPF softfail, DKIM fail on look-alike domain accounts-payable-update[.]com, and Reply-To mismatch. One attachment note: macro-enabled file 'Q4_reconciliation_review.xlsm' observed in 7 delivered copies."
+    },
+    {
+      "id": "E6-02",
+      "type": "timeline",
+      "content": "User activity timeline: At 08:17, user j.mercer opened the vendor-themed email; at 08:19, secure web gateway logged click-through to hxxps://sharepoint-docsverify[.]com/session; at 08:21, endpoint telemetry shows Office child process spawning cmd.exe then powershell.exe with obfuscated command line."
+    },
+    {
+      "id": "E6-03",
+      "type": "indicator",
+      "content": "Endpoint artifact (FIN-LT-14): Process chain winword.exe -> cmd.exe -> powershell.exe -> rundll32.exe; shortly after, new scheduled task 'UpdaterHealthCheck' created to launch signed binary updaterhost.exe from C:\\ProgramData\\SystemCache\\. Parent/child relationship deviates from host baseline."
+    },
+    {
+      "id": "E6-04",
+      "type": "report",
+      "content": "Identity telemetry (Azure AD): j.mercer successful interactive login from campus IP at 08:14 and additional token refresh from foreign ASN at 08:33 using legacy auth protocol; MFA claim absent for second event due to conditional access exception tied to 'finance-automation' app registration."
+    },
+    {
+      "id": "E6-05",
+      "type": "indicator",
+      "content": "Privilege escalation indicator: Service account svc_finbatch added to local Administrators on APP-SQL-02 at 09:02 via remote command source WORKSTATION-14$. Change ticket not found for this membership modification."
+    },
+    {
+      "id": "E6-06",
+      "type": "timeline",
+      "content": "Lateral movement sequence: 09:07 SMB admin$ access from FIN-LT-14 to APP-SQL-02; 09:11 PsExec-style service creation ('PSEXESVC') on APP-SQL-02; 09:19 RDP logon type 10 from APP-SQL-02 to FILE-RES-07 under svc_finbatch."
+    },
+    {
+      "id": "E6-07",
+      "type": "report",
+      "content": "Network telemetry (NetFlow + DNS): APP-SQL-02 generated periodic 6-minute TLS sessions to updatecdn-telemetry[.]net with low outbound/high inbound ratio, then at 10:02 initiated 1.4 GB outbound transfer to object-share-sync[.]com over HTTPS. DNS for both domains used short TTL (30-60s) and rotating A records."
+    },
+    {
+      "id": "E6-08",
+      "type": "statement",
+      "content": "SIEM alert stream excerpt (08:00-10:30): 142 total alerts. 97 were vulnerability scanner authentications from approved scanner range; 18 were routine backup script failures; 9 medium alerts flagged suspicious PowerShell encoding; 6 high alerts flagged remote service creation; 3 high alerts flagged unusual cloud upload volume; 9 alerts auto-closed by suppression rule 'known-admin-tools'."
+    },
+    {
+      "id": "E6-09",
+      "type": "report",
+      "content": "Data access/staging artifact: FILE-RES-07 logs show bulk read of 3,842 research and grant files by svc_finbatch between 09:24-09:51, followed by creation of archive 'FY24_legal_hold_review.zip' (1.3 GB) in temp directory on APP-SQL-02 before outbound transfer window."
+    },
+    {
+      "id": "E6-10",
+      "type": "statement",
+      "content": "Operational constraint note: EDR agent on APP-SQL-02 reported unhealthy at 07:58 after kernel update and did not upload full process telemetry until 10:41. Network sensor covering east-west traffic between APP-SQL-02 and FILE-RES-07 was in maintenance bypass mode during 09:00-09:40."
+    },
+    {
+      "id": "E6-11",
+      "type": "report",
+      "content": "AI triage assistant summary: 'Most likely root cause is direct credential theft from phishing link leading to cloud-session hijack and immediate data exfiltration. Confidence 0.89.' Model notes emphasize identity anomalies and cloud upload volume, but acknowledge no ingestion of host forensic artifacts from APP-SQL-02 due to telemetry delay."
+    },
+    {
+      "id": "E6-12",
+      "type": "indicator",
+      "content": "Potential noise candidate: Infrastructure team executed authenticated Nessus scan from 08:45-09:30 and patch compliance script against APP-SQL-02/FILE-RES-07. These activities generated expected SMB and service-control events similar to some lateral movement signatures."
+    },
+    {
+      "id": "E6-13",
+      "type": "statement",
+      "content": "DB audit note: At 09:37, APP-SQL-02 queried grant_finance view with atypical wildcard export syntax using svc_finbatch context. Query shape resembles monthly reporting job but was executed outside normal schedule window (normally 02:00 local)."
+    },
+    {
+      "id": "E6-14",
+      "type": "timeline",
+      "content": "Incident coordination timeline: SOC analyst raised case at 09:15 for encoded PowerShell on FIN-LT-14; escalation to incident commander delayed until 10:26 after confirming cloud upload anomaly; containment (credential reset + host isolation) initiated at 10:48."
+    }
+  ],
+  "decision_nodes": [
+    {
+      "id": "D6-01",
+      "prompt": "Most likely initial access vector for this incident?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Phishing email plus malicious attachment/link execution on FIN-LT-14",
+          "nextNodeId": "D6-02"
+        },
+        {
+          "label": "Pre-existing service account exposure unrelated to the email campaign",
+          "nextNodeId": "D6-03"
+        },
+        {
+          "label": "Likely benign admin activity misclassified as intrusion",
+          "nextNodeId": "D6-03"
+        }
+      ]
+    },
+    {
+      "id": "D6-02",
+      "prompt": "Most plausible persistence or foothold mechanism after initial execution?",
+      "recordInFinalScreen": false,
+      "options": [
+        {
+          "label": "Scheduled task and signed-binary abuse (updaterhost.exe) on compromised endpoint",
+          "nextNodeId": "D6-04"
+        },
+        {
+          "label": "Primary persistence through stolen cloud tokens and conditional access gap",
+          "nextNodeId": "D6-04"
+        },
+        {
+          "label": "No persistence; only transient command execution",
+          "nextNodeId": "D6-05"
+        }
+      ]
+    },
+    {
+      "id": "D6-03",
+      "prompt": "If phishing is not primary, what alternative compromise path is most plausible?",
+      "recordInFinalScreen": false,
+      "options": [
+        {
+          "label": "Service account misuse enabled direct server access and onward movement",
+          "nextNodeId": "D6-04"
+        },
+        {
+          "label": "Scanner/patching operations explain most artifacts; compromise path remains unproven",
+          "nextNodeId": "D6-05"
+        }
+      ]
+    },
+    {
+      "id": "D6-04",
+      "prompt": "Most likely lateral movement path and high-value target?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "FIN-LT-14 to APP-SQL-02 via remote exec, then pivot to FILE-RES-07 for bulk collection",
+          "nextNodeId": "D6-05"
+        },
+        {
+          "label": "Cloud identity abuse directly accessed data without meaningful internal lateral movement",
+          "nextNodeId": "D6-05"
+        },
+        {
+          "label": "No clear lateral movement; telemetry overlap prevents reliable path attribution",
+          "nextNodeId": "D6-05"
+        }
+      ]
+    },
+    {
+      "id": "D6-05",
+      "prompt": "What is the clearest sign of attacker objective or impact?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Bulk archive staging and outbound transfer indicate likely data exfiltration objective",
+          "nextNodeId": "D6-06"
+        },
+        {
+          "label": "Primary objective appears persistence and privileged positioning for later action",
+          "nextNodeId": "D6-06"
+        },
+        {
+          "label": "Evidence supports operational disruption/noise more than confirmed objective completion",
+          "nextNodeId": "D6-07"
+        }
+      ]
+    },
+    {
+      "id": "D6-06",
+      "prompt": "Most critical detection or visibility failure that amplified risk?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Suppression of admin-tool alerts and delayed escalation despite correlated high-signal alerts",
+          "nextNodeId": "D6-07"
+        },
+        {
+          "label": "Conditional access exception and missing MFA claim validation for sensitive workflows",
+          "nextNodeId": "D6-07"
+        },
+        {
+          "label": "Telemetry gaps from EDR outage and east-west sensor bypass during key movement window",
+          "nextNodeId": "D6-07"
+        }
+      ]
+    },
+    {
+      "id": "D6-07",
+      "prompt": "Highest-leverage mitigation priority while investigation continues?",
+      "recordInFinalScreen": true,
+      "options": [
+        {
+          "label": "Contain likely pivot hosts, rotate privileged/service credentials, and enforce temporary egress controls",
+          "nextNodeId": null
+        },
+        {
+          "label": "Prioritize identity hardening: remove legacy auth exception, require MFA, and revoke active tokens",
+          "nextNodeId": null
+        },
+        {
+          "label": "Prioritize detection resilience: disable noisy suppressions, restore sensor coverage, and fast-track triage playbooks",
+          "nextNodeId": null
+        }
+      ]
+    }
+  ],
+  "required_final_selections": {
+    "primaryHypothesis": {
+      "mode": "options",
+      "options": [
+        "Phishing-driven endpoint execution on FIN-LT-14 established foothold, then attacker abused remote execution and service-account privilege changes to stage and exfiltrate research data via APP-SQL-02.",
+        "Initial compromise likely began with identity token abuse tied to conditional-access gaps, with subsequent server-side actions blending attacker activity and legitimate admin tooling before probable exfiltration.",
+        "A blended compromise is most plausible: phishing artifacts are real, but operational noise from scans/patching obscures exact lateral steps; data staging and outbound transfer still indicate material impact.",
+        "Primary risk stems from privileged identity control failure rather than endpoint malware, enabling unauthorized data access and transfer with only partial host-level evidence due to telemetry gaps.",
+        "Observed events may combine limited intrusion with significant false-positive overlap; suspicious staging and transfers warrant high concern, but full compromise path remains partially unresolved.",
+        "The strongest narrative is delayed detection of a multi-stage intrusion where early high-signal alerts were buried by noise and suppressions, allowing collection, staging, and probable exfiltration before containment."
+      ]
+    },
+    "riskLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ]
+    },
+    "confidenceLevel": {
+      "mode": "enum",
+      "allowed": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    }
+  },
+  "downloadable_artifacts": [
+    {
+      "format": "JSON"
+    },
+    {
+      "format": "PDF"
+    }
+  ]
+}
