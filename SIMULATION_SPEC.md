@@ -261,6 +261,11 @@ Final screen must always include all nine required completion elements from Sect
 - Server-authoritative values must populate completion record (timestamps, duration, session ID).
 - Artifact should include integrity metadata (e.g., hash/signature/version) when feasible.
 
+## Schema Validation
+- Scenario JSON files must validate against `SCENARIO_SCHEMA.json` before use.
+- Session records must validate against `SESSION_SCHEMA.json` before rendering the Assessment Complete screen or generating evidence packs.
+- Future scenario authoring must follow these schemas.
+
 ---
 
 ## 11. Non-Functional Requirements
