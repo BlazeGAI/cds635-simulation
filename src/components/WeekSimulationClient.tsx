@@ -18,21 +18,50 @@ export default function WeekSimulationClient({ scenario, weekId }: { scenario: S
   const [riskLevel, setRiskLevel] = useState('');
   const [confidenceLevel, setConfidenceLevel] = useState('');
   const [finalRecord, setFinalRecord] = useState<any>(null);
+  const [startError, setStartError] = useState('');
+  const [isStartingSession, setIsStartingSession] = useState(false);
 
   const nodeById = useMemo(() => Object.fromEntries(scenario.decision_nodes.map((n) => [n.id, n])), [scenario]);
   const currentNode = nodeById[nodeId];
 
   async function startSession() {
-    const res = await fetch('/api/start-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ studentDisplayName, scenarioId: scenario.scenarioId }),
-    });
-    if (!res.ok) return;
-    const data = await res.json();
-    setSessionId(data.sessionId);
-    setStartedAt(data.startedAt);
-    setStep('briefing');
+    const trimmedName = studentDisplayName.trim();
+    console.log('[WeekSimulationClient] Start button clicked', { scenarioId: scenario.scenarioId, studentDisplayName: trimmedName });
+
+    if (trimmedName.length < 1) {
+      setStartError('Please enter your display name before starting.');
+      return;
+    }
+
+    setStartError('');
+    setIsStartingSession(true);
+    console.log('[WeekSimulationClient] Starting session request');
+
+    try {
+      const res = await fetch('/api/start-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentDisplayName: trimmedName, scenarioId: scenario.scenarioId }),
+      });
+
+      console.log('[WeekSimulationClient] Session request completed', { ok: res.ok, status: res.status });
+
+      if (!res.ok) {
+        const errorPayload = await res.json().catch(() => null);
+        setStartError(errorPayload?.error ?? 'Unable to start session. Please try again.');
+        return;
+      }
+
+      const data = await res.json();
+      setSessionId(data.sessionId);
+      setStartedAt(data.startedAt);
+      setStep('briefing');
+    } catch (error) {
+      console.log('[WeekSimulationClient] Session request failed', error);
+      setStartError('Unable to start session due to a network error. Please try again.');
+    } finally {
+      setIsStartingSession(false);
+    }
   }
 
   async function completeSession() {
@@ -73,7 +102,11 @@ export default function WeekSimulationClient({ scenario, weekId }: { scenario: S
           <h2>Start Session</h2>
           <label>Student Display Name</label>
           <input value={studentDisplayName} onChange={(e) => setStudentDisplayName(e.target.value)} />
-          <button disabled={!studentDisplayName.trim()} onClick={startSession}>Start</button>
+          {startError && <p style={{ color: '#b42318', marginTop: 8 }}>{startError}</p>}
+          <button disabled={isStartingSession || !studentDisplayName.trim()} onClick={startSession}>
+            {isStartingSession ? 'Starting…' : 'Start'}
+          </button>
+          {isStartingSession && <p style={{ marginTop: 8, fontSize: 12 }}>Starting your session…</p>}
         </div>
       )}
 
