@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import type { Scenario } from '@/src/lib/scenarios';
 import FinalAssessment from './FinalAssessment';
 
@@ -88,14 +89,22 @@ export default function WeekSimulationClient({ scenario, weekId }: { scenario: S
 
   return (
     <main>
+      <div className="page-intro card">
+        <Link href="/" className="back-link">
+          ← Back to Weeks
+        </Link>
+        <h1 className="week-page-title">Week {weekId}: {scenario.title}</h1>
+        <p className="muted-meta">
+          {sessionId ? `Session ${sessionId}` : 'Session not started'} {startedAt ? `• Started ${new Date(startedAt).toLocaleTimeString()}` : ''}
+        </p>
+      </div>
+
       <div className="stepper">
         {['Name', 'Briefing', 'Evidence', 'Decision', 'Final', 'Complete'].map((s, i) => {
           const map = ['name', 'briefing', 'evidence', 'decision', 'final-input', 'complete'];
           return <span key={s} className={`step ${map[i] === step ? 'active' : ''}`}>{s}</span>;
         })}
       </div>
-
-      <div className="card"><strong>{scenario.title}</strong> — Week {weekId} {sessionId ? `| Session ${sessionId}` : ''} {startedAt ? `| Started ${new Date(startedAt).toLocaleTimeString()}` : ''}</div>
 
       {step === 'name' && (
         <div className="card">
@@ -123,7 +132,7 @@ export default function WeekSimulationClient({ scenario, weekId }: { scenario: S
         <div className="card">
           <h2>Evidence Review</h2>
           {scenario.evidence_items.map((item) => (
-            <div key={item.id} style={{ border: '1px solid #ddd', padding: 8, marginBottom: 8 }}>
+            <div key={item.id} className="evidence-item">
               <button onClick={() => setOpenEvidenceId(openEvidenceId === item.id ? null : item.id)}>{item.id} ({item.type})</button>
               {openEvidenceId === item.id && <p>{item.content}</p>}
             </div>
@@ -136,24 +145,26 @@ export default function WeekSimulationClient({ scenario, weekId }: { scenario: S
         <div className="card">
           <h2>Decision Flow</h2>
           <p>{currentNode.prompt}</p>
-          {currentNode.options.map((opt) => (
-            <button
-              key={opt.label}
-              style={{ display: 'block', marginBottom: 8 }}
-              onClick={() => {
-                if (currentNode.recordInFinalScreen) {
-                  setBranchDecisions((prev) => [...prev, { branchId: currentNode.id, prompt: currentNode.prompt, selectedOption: opt.label }]);
-                }
-                if (opt.nextNodeId) {
-                  setNodeId(opt.nextNodeId);
-                } else {
-                  setStep('final-input');
-                }
-              }}
-            >
-              {opt.label}
-            </button>
-          ))}
+          <div className="option-stack">
+            {currentNode.options.map((opt) => (
+              <button
+                key={opt.label}
+                className="option-button"
+                onClick={() => {
+                  if (currentNode.recordInFinalScreen) {
+                    setBranchDecisions((prev) => [...prev, { branchId: currentNode.id, prompt: currentNode.prompt, selectedOption: opt.label }]);
+                  }
+                  if (opt.nextNodeId) {
+                    setNodeId(opt.nextNodeId);
+                  } else {
+                    setStep('final-input');
+                  }
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
