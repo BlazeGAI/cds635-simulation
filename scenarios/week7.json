@@ -3,13 +3,13 @@
   "title": "Week 7: Emerging Threats and AI-enabled Risk Outlook (Strategic Assessment)",
   "briefing": {
     "narrative": "University leadership has requested a strategic assessment after a fast-moving incident window involving identity anomalies, suspicious finance requests, and conflicting AI-generated analytic summaries. Security operations believes adversaries may be using AI to accelerate social engineering and operational tempo, but available telemetry includes significant blind spots and possible noise. Your task is to determine the most concerning threat vector, identify the highest strategic risk, and recommend the most defensible governance and detection improvements under uncertainty.",
-    "instructions": "Review all evidence for reliability, timing, and relevance to attacker speed/scale. Distinguish plausible adversary behavior from benign overlap, then document your reasoning through the decision path. Multiple interpretations may be defensible; prioritize analytic rigor and practical risk reduction when selecting your final hypothesis, risk level, and confidence level." 
+    "instructions": "Review all evidence for reliability, timing, and relevance to attacker speed/scale. Distinguish plausible adversary behavior from benign overlap, then document your reasoning through the decision path. Multiple interpretations may be defensible; prioritize analytic rigor and practical risk reduction when selecting your final hypothesis, risk level, and confidence level. Indicators such as IP addresses, domains, and account names are sanitized for training and may include reserved documentation ranges."
   },
   "evidence_items": [
     {
       "id": "E7-01",
       "type": "timeline",
-      "content": "Condensed event sequence (all local time): 08:06 CFO receives urgent voice call requesting same-day vendor payment reroute; 08:12 finance analyst receives follow-up email with revised wire instructions; 08:18 unusual OAuth consent granted to 'DocuSign-Archive-Helper'; 08:25 two impossible-travel sign-ins for finance controller account; 08:41 treasury portal payment batch paused after manual challenge; 09:03 SOC opens investigation after correlated identity and email alerts."
+      "content": "Condensed event sequence (all times UTC on simulated date 2026-03-11): 08:06 CFO receives urgent voice call requesting same-day vendor payment reroute; 08:12 finance analyst receives follow-up email with revised wire instructions; 08:18 unusual OAuth consent granted to 'DocuSign-Archive-Helper'; 08:25 two impossible-travel sign-ins for finance controller account; 08:41 treasury portal payment batch paused after manual challenge; 09:03 SOC opens investigation after correlated identity and email alerts."
     },
     {
       "id": "E7-02",
@@ -19,7 +19,7 @@
     {
       "id": "E7-03",
       "type": "statement",
-      "content": "AI-enabled social engineering artifact: Executive assistant reports caller used the CFO's voice cadence, pet-name for treasury lead, and referenced a real conference itinerary not yet public. Call asked for 'silent expedite' of a $486,000 wire to a new account due to 'acquisition NDA timing.' Voice message clip reviewed by media team sounded authentic but had slight prosody glitches on repeated words."
+      "content": "AI-enabled social engineering artifact: Executive assistant reports caller used the CFO's voice cadence, pet-name for treasury lead, and referenced a real conference itinerary not yet public. The EA mailbox had a recent suspicious sign-in alert, suggesting calendar and travel details may have been exposed. Call asked for 'silent expedite' of a $486,000 wire to a new account due to 'acquisition NDA timing.' Voice message clip reviewed by media team sounded authentic but had slight prosody glitches on repeated words."
     },
     {
       "id": "E7-04",
