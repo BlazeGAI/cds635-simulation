@@ -22,8 +22,10 @@ type FeedbackRules = {
   dimensionTags: Record<string, string[]>;
   dimensionDescriptions: Record<string, string>;
   reportSections: Array<{ title: string; template: string }>;
-  gapRules: Array<{ id: string; dimension: string; minCount: number; prompt: string }>;
+  gapRules: Array<{ id: string; dimension: string; minCount: number; prompt: string; priority?: number }>;
 };
+
+type GapRule = FeedbackRules['gapRules'][number];
 
 type GenerateFeedbackInput = {
   scenarioId: string;
@@ -84,6 +86,49 @@ function getFeedbackRules(scenarioId: string): FeedbackRules {
 
 function titleCase(value: string): string {
   return value.slice(0, 1).toUpperCase() + value.slice(1);
+}
+
+function selectGapPrompts(gapRules: GapRule[], coverage: Record<string, number>): string[] {
+  const triggeredRules = gapRules
+    .filter((rule) => (coverage[rule.dimension] ?? 0) < rule.minCount)
+    .sort((a, b) => {
+      const priorityDelta = (a.priority ?? 3) - (b.priority ?? 3);
+      if (priorityDelta !== 0) {
+        return priorityDelta;
+      }
+
+      return a.id.localeCompare(b.id);
+    });
+
+  const selected: GapRule[] = [];
+  const seenDimensions = new Set<string>();
+
+  for (const rule of triggeredRules) {
+    if (selected.length === 3) {
+      break;
+    }
+
+    if (seenDimensions.has(rule.dimension)) {
+      continue;
+    }
+
+    selected.push(rule);
+    seenDimensions.add(rule.dimension);
+  }
+
+  for (const rule of triggeredRules) {
+    if (selected.length === 3) {
+      break;
+    }
+
+    if (selected.includes(rule)) {
+      continue;
+    }
+
+    selected.push(rule);
+  }
+
+  return selected.map((rule) => rule.prompt);
 }
 
 export function generateFeedback({ scenarioId, decisionLog, finalSelections }: GenerateFeedbackInput): GeneratedFeedback {
@@ -276,9 +321,7 @@ export function generateFeedback({ scenarioId, decisionLog, finalSelections }: G
     implications.push('Frame your conclusions as a current working assessment and identify what new evidence would most likely strengthen or revise that assessment.');
   }
 
-  const gapPrompts = rules.gapRules
-    .filter((rule) => (coverageCounts[rule.dimension] ?? 0) < rule.minCount)
-    .map((rule) => rule.prompt);
+  const gapPromptRules: GapRule[] = [...rules.gapRules];
 
   if (
     supportsDimension('dns_patterns') &&
@@ -288,8 +331,16 @@ export function generateFeedback({ scenarioId, decisionLog, finalSelections }: G
     (coverageCounts.tls_metadata ?? 0) === 0 &&
     (coverageCounts.proxy_http_indicators ?? 0) === 0
   ) {
-    gapPrompts.push('Cite at least one specific network characteristic (DNS behavior, TLS metadata, or proxy/HTTP indicators) and explain why it materially supports your conclusion.');
+    gapPromptRules.push({
+      id: 'network-characteristics-evidence',
+      dimension: 'dns_patterns',
+      minCount: 1,
+      prompt: 'Cite at least one specific network characteristic (DNS behavior, TLS metadata, or proxy/HTTP indicators) and explain why it materially supports your conclusion.',
+      priority: 2,
+    });
   }
+
+  const gapPrompts = selectGapPrompts(gapPromptRules, coverageCounts);
 
   const firstDecision = decisionLog[0];
   const lastDecision = decisionLog[decisionLog.length - 1];

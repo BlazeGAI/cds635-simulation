@@ -54,6 +54,9 @@ export default function FinalAssessment(props: FinalAssessmentProps) {
         <p><strong>Risk Level:</strong> {props.riskLevel}</p>
         <p><strong>Confidence Level:</strong> {props.confidenceLevel}</p>
 
+        <p>Your forum post summarizes the operational decision you made in the simulation.</p>
+        <p>Your written report explains your reasoning using structured analysis and supporting evidence.</p>
+
         <h3>Branching Decisions</h3>
         {props.branchDecisions.length === 0 ? (
           <p>None</p>
@@ -70,7 +73,9 @@ export default function FinalAssessment(props: FinalAssessmentProps) {
         <details className="feedback-details" open>
           <summary>Feedback for your report</summary>
 
-          <h3>What you chose</h3>
+          <p>The suggestions below are intended to help you organize and strengthen your written analysis. Your report should explain and justify the decisions you made in the simulation using evidence from the scenario.</p>
+
+          <h3>Your decision path</h3>
           <ol>
             {feedback.decisionTraceSummary.decisions.map((decision) => (
               <li key={`${decision.decisionId}-${decision.order}`}>
@@ -84,12 +89,12 @@ export default function FinalAssessment(props: FinalAssessmentProps) {
             <li><strong>Confidence level:</strong> {feedback.decisionTraceSummary.finalSelections.confidenceLevel}</li>
           </ul>
 
-          <h3>What your choices imply</h3>
+          <h3>What your decisions suggest</h3>
           <ul>
             {feedback.implications.map((item, idx) => <li key={`implication-${idx}`}>{item}</li>)}
           </ul>
 
-          <h3>What your report must address</h3>
+          <h3>Ideas to strengthen your report</h3>
           <p><strong>Core sections</strong></p>
           <ul>
             {feedback.reportChecklist.coreSections.map((section) => (
@@ -118,6 +123,7 @@ export default function FinalAssessment(props: FinalAssessmentProps) {
               <ul>
                 {feedback.reportChecklist.gapPrompts.map((prompt, idx) => <li key={`gap-${idx}`}>{prompt}</li>)}
               </ul>
+              <p><em>Tip: You do not need to address every suggestion. Use the ideas that best strengthen your explanation and evidence-based reasoning.</em></p>
             </>
           )}
 
