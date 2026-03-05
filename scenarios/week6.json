@@ -3,7 +3,7 @@
   "title": "Week 6: Integrated Capstone (Outcome Assessment) — Multi-Source Threat Scenario Analysis and Risk Prioritization",
   "briefing": {
     "narrative": "The university SOC is conducting an outcome-focused capstone assessment after a suspected multi-stage compromise affecting email, identity, endpoint, and research data systems. Leadership needs an integrated narrative that explains what most likely happened, what evidence is signal versus noise, and which response priorities most reduce institutional risk. Available telemetry is incomplete in key places, and several artifacts may support more than one defensible interpretation.",
-    "instructions": "Reconstruct an end-to-end intrusion narrative from mixed evidence sources. Distinguish high-value indicators from operational noise, select the primary hypothesis that best explains the compromise path, assign risk and confidence, identify the most critical detection failure, and prioritize high-impact mitigations. Multiple interpretations are possible; focus on analytic defensibility rather than certainty."
+    "instructions": "Reconstruct an end-to-end intrusion narrative from mixed evidence sources. Distinguish high-value indicators from operational noise, select the primary hypothesis that best explains the compromise path, assign risk and confidence, identify the most critical detection failure, and prioritize high-impact mitigations. Multiple interpretations are possible; focus on analytic defensibility rather than certainty. Indicators such as IP addresses, domains, and account names are sanitized for training and may include reserved documentation ranges."
   },
   "evidence_items": [
     {
@@ -24,12 +24,12 @@
     {
       "id": "E6-04",
       "type": "report",
-      "content": "Identity telemetry (Azure AD): j.mercer successful interactive login from campus IP at 08:14 and additional token refresh from foreign ASN at 08:33 using legacy auth protocol; MFA claim absent for second event due to conditional access exception tied to 'finance-automation' app registration."
+      "content": "Identity telemetry (Azure AD): j.mercer successful interactive login from campus IP at 08:14 and additional non-interactive sign-in from a foreign ASN at 08:33 classified as legacy authentication by the identity provider; MFA claim absent for second event due to conditional access exception tied to 'finance-automation' app registration."
     },
     {
       "id": "E6-05",
       "type": "indicator",
-      "content": "Privilege escalation indicator: Service account svc_finbatch added to local Administrators on APP-SQL-02 at 09:02 via remote command source WORKSTATION-14$. Change ticket not found for this membership modification."
+      "content": "Privilege escalation indicator: Service account svc_finbatch added to local Administrators on APP-SQL-02 at 09:02 via remote management tooling attributed to WORKSTATION-14$ (computer account), consistent with an endpoint management channel or delegated machine credentials. Change ticket not found for this membership modification."
     },
     {
       "id": "E6-06",
