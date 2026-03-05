@@ -1,136 +1,139 @@
 {
   "dimensionTags": {
-    "D6-01::Phishing email plus malicious attachment/link execution on FIN-LT-14": ["narrative_coherence", "multi_source_fusion", "risk_reasoning"],
-    "D6-01::Pre-existing service account exposure unrelated to the email campaign": ["narrative_coherence", "multi_source_fusion", "alternative_hypotheses"],
-    "D6-01::Likely benign admin activity misclassified as intrusion": ["narrative_coherence", "alternative_hypotheses", "confidence_reasoning"],
+    "D6-01::Phishing email plus malicious attachment/link execution on FIN-LT-14": ["narrative_coherence","multi_source_fusion","risk_reasoning"],
+    "D6-01::Pre-existing service account exposure unrelated to the email campaign": ["narrative_coherence","multi_source_fusion","alternative_hypotheses"],
+    "D6-01::Likely benign admin activity misclassified as intrusion": ["narrative_coherence","alternative_hypotheses","confidence_reasoning"],
 
-    "D6-02::Scheduled task and signed-binary abuse (updaterhost.exe) on compromised endpoint": ["narrative_coherence", "multi_source_fusion", "risk_reasoning"],
-    "D6-02::Primary persistence through stolen cloud tokens and conditional access gap": ["narrative_coherence", "multi_source_fusion", "risk_reasoning"],
-    "D6-02::No persistence; only transient command execution": ["narrative_coherence", "confidence_reasoning", "alternative_hypotheses"],
+    "D6-02::Scheduled task and signed-binary abuse (updaterhost.exe) on compromised endpoint": ["narrative_coherence","multi_source_fusion","risk_reasoning"],
+    "D6-02::Primary persistence through stolen cloud tokens and conditional access gap": ["narrative_coherence","multi_source_fusion","risk_reasoning"],
+    "D6-02::No persistence; only transient command execution": ["narrative_coherence","confidence_reasoning","alternative_hypotheses"],
 
-    "D6-03::Service account misuse enabled direct server access and onward movement": ["narrative_coherence", "alternative_hypotheses", "multi_source_fusion"],
-    "D6-03::Scanner/patching operations explain most artifacts; compromise path remains unproven": ["alternative_hypotheses", "narrative_coherence", "confidence_reasoning"],
+    "D6-03::Service account misuse enabled direct server access and onward movement": ["narrative_coherence","alternative_hypotheses","multi_source_fusion"],
+    "D6-03::Scanner/patching operations explain most artifacts; compromise path remains unproven": ["alternative_hypotheses","narrative_coherence","confidence_reasoning"],
 
-    "D6-04::FIN-LT-14 to APP-SQL-02 via remote exec, then pivot to FILE-RES-07 for bulk collection": ["multi_source_fusion", "narrative_coherence", "uncertainty_collection"],
-    "D6-04::Cloud identity abuse directly accessed data without meaningful internal lateral movement": ["multi_source_fusion", "narrative_coherence", "uncertainty_collection"],
-    "D6-04::No clear lateral movement; telemetry overlap prevents reliable path attribution": ["multi_source_fusion", "narrative_coherence", "uncertainty_collection", "confidence_reasoning"],
+    "D6-04::FIN-LT-14 to APP-SQL-02 via remote exec, then pivot to FILE-RES-07 for bulk collection": ["multi_source_fusion","narrative_coherence","uncertainty_collection"],
+    "D6-04::Cloud identity abuse directly accessed data without meaningful internal lateral movement": ["multi_source_fusion","narrative_coherence","uncertainty_collection"],
+    "D6-04::No clear lateral movement; telemetry overlap prevents reliable path attribution": ["multi_source_fusion","narrative_coherence","uncertainty_collection","confidence_reasoning"],
 
-    "D6-05::Bulk archive staging and outbound transfer indicate likely data exfiltration objective": ["risk_reasoning", "narrative_coherence", "multi_source_fusion"],
-    "D6-05::Primary objective appears persistence and privileged positioning for later action": ["risk_reasoning", "narrative_coherence", "tradeoff"],
-    "D6-05::Evidence supports operational disruption/noise more than confirmed objective completion": ["risk_reasoning", "narrative_coherence", "alternative_hypotheses", "confidence_reasoning"],
+    "D6-05::Bulk archive staging and outbound transfer indicate likely data exfiltration objective": ["risk_reasoning","narrative_coherence","multi_source_fusion"],
+    "D6-05::Primary objective appears persistence and privileged positioning for later action": ["risk_reasoning","narrative_coherence","tradeoff"],
+    "D6-05::Evidence supports operational disruption/noise more than confirmed objective completion": ["risk_reasoning","narrative_coherence","alternative_hypotheses","confidence_reasoning"],
 
-    "D6-06::Suppression of admin-tool alerts and delayed escalation despite correlated high-signal alerts": ["detection_gap", "multi_source_fusion", "prioritization"],
-    "D6-06::Conditional access exception and missing MFA claim validation for sensitive workflows": ["detection_gap", "multi_source_fusion", "risk_reasoning"],
-    "D6-06::Telemetry gaps from EDR outage and east-west sensor bypass during key movement window": ["detection_gap", "multi_source_fusion", "uncertainty_collection"],
+    "D6-06::Suppression of admin-tool alerts and delayed escalation despite correlated high-signal alerts": ["detection_gap","multi_source_fusion","prioritization"],
+    "D6-06::Conditional access exception and missing MFA claim validation for sensitive workflows": ["detection_gap","multi_source_fusion","risk_reasoning"],
+    "D6-06::Telemetry gaps from EDR outage and east-west sensor bypass during key movement window": ["detection_gap","multi_source_fusion","uncertainty_collection"],
 
-    "D6-07::Contain likely pivot hosts, rotate privileged/service credentials, and enforce temporary egress controls": ["prioritization", "tradeoff", "containment_strategy", "evidence_preservation"],
-    "D6-07::Prioritize identity hardening: remove legacy auth exception, require MFA, and revoke active tokens": ["prioritization", "tradeoff", "containment_strategy", "evidence_preservation", "risk_reasoning"],
-    "D6-07::Prioritize detection resilience: disable noisy suppressions, restore sensor coverage, and fast-track triage playbooks": ["prioritization", "tradeoff", "containment_strategy", "evidence_preservation", "uncertainty_collection"]
+    "D6-07::Contain likely pivot hosts, rotate privileged/service credentials, and enforce temporary egress controls": ["prioritization","tradeoff","containment_strategy","evidence_preservation"],
+    "D6-07::Prioritize identity hardening: remove legacy auth exception, require MFA, and revoke active tokens": ["prioritization","tradeoff","containment_strategy","evidence_preservation","risk_reasoning"],
+    "D6-07::Prioritize detection resilience: disable noisy suppressions, restore sensor coverage, and fast-track triage playbooks": ["prioritization","tradeoff","containment_strategy","evidence_preservation","uncertainty_collection"]
   },
+
   "dimensionDescriptions": {
-    "multi_source_fusion": "Integrate identity, endpoint, network, email, and SIEM evidence into one defensible analytic thread; explain where sources corroborate each other and where they conflict.",
-    "narrative_coherence": "Write a staged end-to-end storyline (access, foothold, movement, objective, response) and explicitly mark assumptions versus directly observed facts.",
-    "alternative_hypotheses": "Present at least one credible alternative explanation, identify the strongest supporting evidence for it, and justify why it is currently less likely than your primary hypothesis.",
-    "detection_gap": "Name the single most consequential visibility or detection failure that amplified impact, and explain why this gap mattered operationally.",
-    "prioritization": "Justify why your selected action is highest leverage now, including expected risk reduction, timing, and dependency constraints.",
-    "containment_strategy": "Describe immediate containment actions and sequencing, including what happens first, what follows, and the decision trigger for each step.",
-    "evidence_preservation": "Explain how containment choices affect forensic artifact retention and how you will preserve critical evidence while reducing active risk.",
-    "stakeholder_communication": "Communicate conclusions in executive-ready language: clear business impact, decision relevance, and minimal jargon with necessary technical precision.",
-    "risk_reasoning": "Tie risk level to likely impact, affected assets/processes, exposure duration, and adversary opportunity rather than indicator count alone.",
-    "confidence_reasoning": "Tie confidence level to corroboration strength, source reliability, and unresolved ambiguity; explain why confidence is not higher or lower.",
-    "uncertainty_collection": "Specify 1–2 highest-yield collection actions, what result each action could return, and how that result would increase, decrease, or reverse confidence.",
-    "tradeoff": "Explain the tradeoffs among speed, disruption, visibility, and long-term resilience for the response path you recommend."
+    "multi_source_fusion": "Explain how different telemetry sources (identity, endpoint, network, email, or SIEM) combine to support or challenge the overall interpretation.",
+    "narrative_coherence": "Present a logical storyline of the incident progression and clarify which elements are confirmed observations versus analytical assumptions.",
+    "alternative_hypotheses": "Consider at least one plausible alternative explanation and briefly explain why it appears less consistent with the available evidence.",
+    "detection_gap": "Identify a visibility or detection limitation that may have allowed the activity to progress or remain undetected.",
+    "prioritization": "Explain why the selected response or action appears most important given the current risk and operational constraints.",
+    "containment_strategy": "Describe the immediate response steps that could reduce risk while maintaining operational stability.",
+    "evidence_preservation": "Explain how containment or response actions could affect the preservation of forensic artifacts.",
+    "stakeholder_communication": "Communicate conclusions clearly in language appropriate for decision-makers while maintaining technical accuracy.",
+    "risk_reasoning": "Explain how the chosen risk level reflects likely impact and the scope of the potential compromise.",
+    "confidence_reasoning": "Explain why the selected confidence level reflects both the strength of evidence and remaining uncertainty.",
+    "uncertainty_collection": "Identify one or two additional investigative steps that could significantly clarify the situation.",
+    "tradeoff": "Explain operational or investigative tradeoffs associated with the recommended response approach."
   },
+
   "reportSections": [
     {
-      "title": "Executive Summary (audience: leadership)",
-      "template": "In plain language, summarize what most likely happened, current institutional risk, and the highest-priority decision leadership should authorize now. Keep this concise and decision-focused."
+      "title": "Executive Summary",
+      "template": "Briefly summarize what most likely occurred, the potential organizational risk, and the most important response decision."
     },
     {
-      "title": "Situation Overview and Assumptions",
-      "template": "Distinguish confirmed facts from assumptions, state key telemetry limitations, and note which assumptions most affect your conclusion."
+      "title": "Situation Overview",
+      "template": "Distinguish confirmed observations from assumptions and note any important telemetry limitations."
     },
     {
-      "title": "Intrusion Narrative (end-to-end lifecycle, with uncertainty noted)",
-      "template": "Reconstruct the likely lifecycle from initial access through impact using explicit stage transitions; label uncertain transitions and explain why they remain uncertain."
+      "title": "Incident Narrative",
+      "template": "Describe the likely progression of the incident from initial access through impact, identifying where uncertainty remains."
     },
     {
-      "title": "Evidence Synthesis (at least 6 evidence items grouped by source type)",
-      "template": "Group at least 6 artifacts by source type (email, identity, endpoint, network, SIEM) and explain how each group supports or challenges your narrative."
+      "title": "Evidence Overview",
+      "template": "Identify several important artifacts and explain how each supports or challenges the overall interpretation."
     },
     {
-      "title": "Primary Hypothesis and Alternatives (at least one alternative)",
-      "template": "Defend the primary hypothesis and include at least one plausible alternative with the key reason it is currently less likely."
+      "title": "Primary Hypothesis and Alternatives",
+      "template": "Explain the leading interpretation and briefly consider at least one alternative explanation."
     },
     {
-      "title": "Risk Assessment (impact x likelihood, critical assets/processes)",
-      "template": "Assess impact and likelihood explicitly, identify critical assets/processes at risk, and justify the final risk level with concrete evidence."
+      "title": "Risk Assessment",
+      "template": "Discuss the likely impact and exposure of the incident and explain how these factors support the selected risk level."
     },
     {
-      "title": "Confidence Rationale and What Would Change It (top 1–2 collection actions)",
-      "template": "State confidence level and rationale, then identify the top 1–2 collection actions and the specific outcomes that would change your confidence."
+      "title": "Confidence and Remaining Uncertainty",
+      "template": "Explain the confidence level and identify key unknowns that could change the current assessment."
     },
     {
-      "title": "Containment and Mitigation Plan (sequenced steps, tradeoffs, evidence preservation)",
-      "template": "Provide a sequenced plan of immediate actions, include operational tradeoffs for each step, and explain how evidence preservation will be maintained during containment."
+      "title": "Response and Containment Considerations",
+      "template": "Discuss recommended response steps and any operational tradeoffs associated with those actions."
     },
     {
-      "title": "Detection/Visibility Improvement (specific gap + recommended fix)",
-      "template": "Identify the most consequential detection/visibility gap and recommend a concrete technical or process fix with expected effect on future detection quality."
+      "title": "Detection and Visibility Improvements",
+      "template": "Identify one significant detection or monitoring gap and suggest a potential improvement."
     },
     {
-      "title": "Professional Conclusion (next 24–72 hours and longer-term next steps)",
-      "template": "Close with an executive-ready action plan for the next 24–72 hours plus strategic improvements to reduce recurrence and improve response readiness."
+      "title": "Professional Conclusion",
+      "template": "Summarize the recommended next steps for the next phase of investigation or response."
     }
   ],
+
   "gapRules": [
     {
       "id": "weak_multi_source_fusion",
       "dimension": "multi_source_fusion",
       "minCount": 2,
-      "prompt": "Integrate at least 3 telemetry types (for example identity, endpoint, and network) into one narrative chain and explain how they corroborate or conflict."
+      "prompt": "Consider linking evidence from multiple telemetry sources to strengthen the overall explanation of events."
     },
     {
       "id": "weak_narrative_coherence",
       "dimension": "narrative_coherence",
       "minCount": 2,
-      "prompt": "Provide a clear staged storyline from initial access to objective/impact, and explicitly label assumptions at each uncertain transition."
+      "prompt": "You may want to present a clearer sequence of events showing how the incident progressed."
     },
     {
       "id": "missing_alternative_hypotheses",
       "dimension": "alternative_hypotheses",
       "minCount": 1,
-      "prompt": "Add at least one plausible alternative hypothesis and state why it is less likely given the strongest conflicting evidence."
+      "prompt": "Consider discussing at least one alternative explanation and why it appears less consistent with the evidence."
     },
     {
       "id": "missing_prioritization",
       "dimension": "prioritization",
       "minCount": 1,
-      "prompt": "Justify why your chosen action is highest leverage now compared with at least one other reasonable option."
+      "prompt": "Explain why the selected response action appears most important at this stage."
     },
     {
       "id": "missing_evidence_preservation",
       "dimension": "evidence_preservation",
       "minCount": 1,
-      "prompt": "Explicitly address the containment-versus-evidence tradeoff and state how key artifacts will be preserved while response actions proceed."
+      "prompt": "Consider explaining how response actions may affect the preservation of investigative evidence."
     },
     {
       "id": "missing_detection_gap",
       "dimension": "detection_gap",
       "minCount": 1,
-      "prompt": "Name the most consequential visibility failure that amplified risk and provide a concrete remedy to prevent recurrence."
+      "prompt": "You may want to identify one monitoring or detection limitation that influenced the outcome."
     },
     {
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "State explicit confidence rationale tied to evidence quality, corroboration limits, and unresolved unknowns."
+      "prompt": "Explain how the available evidence supports the chosen confidence level."
     },
     {
       "id": "missing_uncertainty_collection",
       "dimension": "uncertainty_collection",
       "minCount": 1,
-      "prompt": "Specify 1–2 collection actions and the exact result from each action that would most change your current conclusion."
+      "prompt": "Consider identifying one or two investigative steps that could most quickly clarify the situation."
     }
   ]
 }
