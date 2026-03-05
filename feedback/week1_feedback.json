@@ -62,31 +62,31 @@
       "id": "missing_collection",
       "dimension": "collection",
       "minCount": 1,
-      "prompt": "Add a collection plan that names 1–2 concrete data pulls (for example SSO, endpoint, or email telemetry) and explains how each would reduce uncertainty."
+      "prompt": "Consider including a short collection plan that names one or two concrete data sources (such as SSO logs, endpoint telemetry, or email logs) and explains how each would reduce uncertainty."
     },
     {
       "id": "missing_detection_gap",
       "dimension": "detection_gap",
       "minCount": 1,
-      "prompt": "Explicitly document detection gaps and unknowns so readers can distinguish confirmed findings from unresolved questions."
+      "prompt": "You may want to note any detection gaps or unknowns so readers can distinguish confirmed findings from unresolved questions."
     },
     {
       "id": "missing_tradeoff",
       "dimension": "tradeoff",
       "minCount": 1,
-      "prompt": "Include at least one action tradeoff statement (benefit, cost, and potential consequence) for your recommended path."
+      "prompt": "Consider explaining one tradeoff associated with your recommended action, including potential benefits, costs, or unintended consequences."
     },
     {
       "id": "missing_risk_reasoning",
       "dimension": "risk_reasoning",
       "minCount": 1,
-      "prompt": "Tie your risk level to concrete impact and likelihood reasoning, not just indicator volume."
+      "prompt": "Explain how your selected risk level relates to likely impact and probability rather than relying only on the number of indicators observed."
     },
     {
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Explain confidence through source quality and corroboration, and identify what would raise confidence in the next cycle."
+      "prompt": "Describe why you selected this confidence level and what additional information would increase your confidence in the assessment."
     }
   ]
 }
