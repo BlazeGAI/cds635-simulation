@@ -1,5 +1,6 @@
 import week1FeedbackRules from '@/feedback/week1_feedback.json';
 import week2FeedbackRules from '@/feedback/week2_feedback.json';
+import week3FeedbackRules from '@/feedback/week3_feedback.json';
 
 type DecisionLogEntry = {
   decisionId: string;
@@ -44,6 +45,7 @@ export type GeneratedFeedback = {
 const feedbackRulesByWeek: Record<string, FeedbackRules> = {
   '1': week1FeedbackRules as FeedbackRules,
   '2': week2FeedbackRules as FeedbackRules,
+  '3': week3FeedbackRules as FeedbackRules,
 };
 
 function getWeekKeyFromScenarioId(scenarioId: string): string {
