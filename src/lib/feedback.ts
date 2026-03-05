@@ -1,4 +1,5 @@
 import week1FeedbackRules from '@/feedback/week1_feedback.json';
+import week2FeedbackRules from '@/feedback/week2_feedback.json';
 
 type DecisionLogEntry = {
   decisionId: string;
@@ -42,6 +43,7 @@ export type GeneratedFeedback = {
 
 const feedbackRulesByWeek: Record<string, FeedbackRules> = {
   '1': week1FeedbackRules as FeedbackRules,
+  '2': week2FeedbackRules as FeedbackRules,
 };
 
 function getWeekKeyFromScenarioId(scenarioId: string): string {
@@ -51,7 +53,12 @@ function getWeekKeyFromScenarioId(scenarioId: string): string {
 
 function getFeedbackRules(scenarioId: string): FeedbackRules {
   const weekKey = getWeekKeyFromScenarioId(scenarioId);
-  return feedbackRulesByWeek[weekKey] ?? (week1FeedbackRules as FeedbackRules);
+  return (
+    feedbackRulesByWeek[weekKey] ??
+    feedbackRulesByWeek[weekKey.replace(/^0+/, '')] ??
+    feedbackRulesByWeek[weekKey.toLowerCase().replace(/^week/, '')] ??
+    (week1FeedbackRules as FeedbackRules)
+  );
 }
 
 function titleCase(value: string): string {
@@ -81,6 +88,8 @@ export function generateFeedback({ scenarioId, decisionLog, finalSelections }: G
   const missingDimensions = Object.keys(rules.dimensionDescriptions).filter((d) => (coverageCounts[d] ?? 0) < 1);
 
   const implications: string[] = [];
+  const supportsDimension = (dimension: string): boolean => Boolean(rules.dimensionDescriptions[dimension]);
+
   if (['High', 'Critical'].includes(finalSelections.riskLevel) && ['Low', 'Medium'].includes(finalSelections.confidenceLevel)) {
     implications.push('Your selections indicate urgency under uncertainty: report immediate risk implications while clearly separating confirmed findings from assumptions.');
   }
@@ -89,20 +98,35 @@ export function generateFeedback({ scenarioId, decisionLog, finalSelections }: G
     implications.push('Your choices lean toward immediate mitigation without explicit follow-on collection, which can increase the chance of acting before key assumptions are validated.');
   }
 
-  if ((coverageCounts.intel ?? 0) >= 2 && (coverageCounts.network ?? 0) === 0 && (coverageCounts.endpoint ?? 0) === 0) {
+  if (
+    supportsDimension('intel') &&
+    supportsDimension('network') &&
+    supportsDimension('endpoint') &&
+    (coverageCounts.intel ?? 0) >= 2 &&
+    (coverageCounts.network ?? 0) === 0 &&
+    (coverageCounts.endpoint ?? 0) === 0
+  ) {
     implications.push('Your path emphasized contextual intelligence more than direct technical telemetry, so your report should call out potential endpoint and network blind spots.');
   }
 
-  if ((coverageCounts.network ?? 0) >= 2 && (coverageCounts.intel ?? 0) === 0) {
+  if (supportsDimension('network') && supportsDimension('intel') && (coverageCounts.network ?? 0) >= 2 && (coverageCounts.intel ?? 0) === 0) {
     implications.push('Your path emphasized local telemetry with limited external context; include how sector patterns or adversary behavior could support or challenge your interpretation.');
   }
 
-  if ((coverageCounts.detection_gap ?? 0) === 0) {
+  if (supportsDimension('detection_gap') && (coverageCounts.detection_gap ?? 0) === 0) {
     implications.push('Your selections did not explicitly surface detection gaps, so your report should include unknowns that could materially change the assessment.');
   }
 
-  if ((coverageCounts.tradeoff ?? 0) === 0) {
+  if (supportsDimension('tradeoff') && (coverageCounts.tradeoff ?? 0) === 0) {
     implications.push('Your narrative may understate operational tradeoffs; include the cost and consequence of both immediate action and delayed action.');
+  }
+
+  if (supportsDimension('adversary_modeling') && supportsDimension('collection') && (coverageCounts.adversary_modeling ?? 0) >= 2 && (coverageCounts.collection ?? 0) === 0) {
+    implications.push('Your actor profile is assertive but under-collected; add one collection action that could materially falsify or confirm your model in the next reporting cycle.');
+  }
+
+  if (supportsDimension('next_move') && supportsDimension('mitigation') && (coverageCounts.next_move ?? 0) > 0 && (coverageCounts.mitigation ?? 0) === 0) {
+    implications.push('You projected the likely next move without committing to a mitigation path; align your forecast with a concrete defensive priority and ownership.');
   }
 
   if (implications.length < 4) {
