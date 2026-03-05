@@ -3,7 +3,7 @@
   "title": "Week 2: Adversarial Modeling — Threat Actor Profiling Under Uncertainty",
   "briefing": {
     "narrative": "The university SOC is investigating coordinated activity affecting finance, research, and identity systems. Leadership needs an operational threat actor profile now, even though evidence is mixed and some signals may be deceptive. Your task is to model likely adversary intent, assess practical capability, estimate the next move, and identify the collection plan that would most increase confidence.",
-    "instructions": "Evaluate each evidence item for relevance, source quality, and possible deception. Use the decision path to document your analytic reasoning under uncertainty. Avoid single-cause assumptions and produce a defensible final judgment on actor profile, risk, and confidence."
+    "instructions": "Evaluate each evidence item for relevance, source quality, and possible deception. Use the decision path to document your analytic reasoning under uncertainty. Avoid single-cause assumptions and produce a defensible final judgment on actor profile, risk, and confidence. Indicators such as IP addresses, domains, and account names are sanitized for training and may include reserved documentation ranges."
   },
   "evidence_items": [
     {
@@ -14,12 +14,12 @@
     {
       "id": "E2",
       "type": "indicator",
-      "content": "SIEM alert artifact: Service account svc_backup authenticated successfully from a new ASN at 02:14 UTC, then queried three finance database tables and one grant-billing export. Query volume was low and timed between routine backup jobs."
+      "content": "SIEM alert artifact: Service account svc_backup authenticated successfully from an ASN not previously observed for this account in the last 90 days at 02:14 UTC, then queried three finance database tables and one grant-billing export. Query volume was low and timed between routine backup jobs."
     },
     {
       "id": "E3",
       "type": "timeline",
-      "content": "Observed sequence: 01:57 failed MFA push flood against two payroll admins; 02:14 unusual service account login; 02:26 outbound HTTPS session to newly observed cloud host; 03:05 account disabled by SOC; 09:10 anonymous message claims possession of donor records."
+      "content": "Observed sequence: 01:57 repeated MFA push prompts following successful password entry (MFA fatigue attempt) against two payroll admins; 02:14 unusual service account login; 02:26 outbound HTTPS session to newly observed cloud host; 03:05 account disabled by SOC; 09:10 anonymous message claims possession of donor records, but provides no verifiable sample."
     },
     {
       "id": "E4",
