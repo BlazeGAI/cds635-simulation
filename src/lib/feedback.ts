@@ -3,6 +3,7 @@ import week2FeedbackRules from '@/feedback/week2_feedback.json';
 import week3FeedbackRules from '@/feedback/week3_feedback.json';
 import week4FeedbackRules from '@/feedback/week4_feedback.json';
 import week5FeedbackRules from '@/feedback/week5_feedback.json';
+import week6FeedbackRules from '@/feedback/week6_feedback.json';
 
 type DecisionLogEntry = {
   decisionId: string;
@@ -50,6 +51,7 @@ const feedbackRulesByWeek: Record<string, FeedbackRules> = {
   '3': week3FeedbackRules as FeedbackRules,
   '4': week4FeedbackRules as FeedbackRules,
   '5': week5FeedbackRules as FeedbackRules,
+  '6': week6FeedbackRules as FeedbackRules,
 };
 
 function getWeekKeyFromScenarioId(scenarioId: string): string {
@@ -211,6 +213,38 @@ export function generateFeedback({ scenarioId, decisionLog, finalSelections }: G
     if (benignCount > beaconingCount && benignCount >= exfilCount) {
       implications.push('Your decision path leans toward benign automation; explicitly justify why suspicious overlaps (for example randomized subdomains or mixed user-agents) are acceptable under the documented operational context.');
     }
+  }
+
+  if (supportsDimension('containment_strategy') && supportsDimension('evidence_preservation') && (coverageCounts.containment_strategy ?? 0) > 0 && (coverageCounts.evidence_preservation ?? 0) > 0) {
+    implications.push('Your response path includes explicit containment sequencing with evidence-preservation considerations; in the report, clarify which steps happen first and which artifacts must be captured before disruptive actions.');
+  }
+
+  if (supportsDimension('detection_gap') && (coverageCounts.detection_gap ?? 0) > 0 && (coverageCounts.prioritization ?? 0) > 0) {
+    implications.push('Your selections identify a concrete detection failure and a priority action; make the causal link explicit so leadership sees how the fix reduces recurrence risk fastest.');
+  }
+
+  if (supportsDimension('tradeoff') && (coverageCounts.tradeoff ?? 0) > 0 && (coverageCounts.uncertainty_collection ?? 0) > 0) {
+    implications.push('Your path balances immediate action with uncertainty-reduction; document the exact collection outcomes that would justify tightening or relaxing containment.');
+  }
+
+  if (decisionLog.some((d) => d.selectedOption.includes('pivot hosts'))) {
+    implications.push('Your mitigation path centers on host containment and credential rotation; make sequencing explicit so volatile evidence is captured before isolation and egress restriction changes take effect.');
+  }
+
+  if (decisionLog.some((d) => d.selectedOption.includes('identity hardening'))) {
+    implications.push('Your priority is identity control hardening; explain near-term access disruption risks and how token revocation, MFA enforcement, and exception rollback are phased to protect critical operations.');
+  }
+
+  if (decisionLog.some((d) => d.selectedOption.includes('detection resilience'))) {
+    implications.push('Your priority is detection resilience; specify how suppression rollback and sensor restoration will be paired with triage capacity so alert quality improves without overwhelming responders.');
+  }
+
+  if (decisionLog.some((d) => d.selectedOption.includes('Conditional access exception'))) {
+    implications.push('Your selected detection gap is identity-policy weakness; connect this to governance controls and clearly state why this failure created disproportionate business risk.');
+  }
+
+  if (decisionLog.some((d) => d.selectedOption.includes('Telemetry gaps from EDR outage'))) {
+    implications.push('Your selected detection gap is telemetry outage during key movement windows; document immediate compensating controls and the order of restoration across endpoint and network visibility.');
   }
 
   if (implications.length < 4) {
