@@ -3,18 +3,18 @@
   "title": "Week 3: Attack Lifecycle Reconstruction — Detection Gap Identification",
   "briefing": {
     "narrative": "Over a 36-hour window, the university SOC observed scattered signals across email, identity, endpoint, and file services. No single artifact proves a complete intrusion chain, but leadership needs a plausible attack lifecycle reconstruction and clear detection priorities before expanding containment actions. Your task is to infer likely initial access, sequence key attacker phases, identify the most critical visibility gap, and choose practical mitigation breakpoints.",
-    "instructions": "Synthesize the evidence into a defensible timeline from initial access through impact potential. Distinguish corroborated steps from assumptions, account for misleading noise, and document decision tradeoffs. Complete the decision path, then select a primary hypothesis, risk level, and confidence level without assuming there is one guaranteed correct answer."
+    "instructions": "Synthesize the evidence into a defensible timeline from initial access through impact potential. Distinguish corroborated steps from assumptions, account for misleading noise, and document decision tradeoffs. Complete the decision path, then select a primary hypothesis, risk level, and confidence level without assuming there is one guaranteed correct answer. Indicators such as IP addresses, domains, and account names are sanitized for training and may include reserved documentation ranges."
   },
   "evidence_items": [
     {
       "id": "E1",
       "type": "timeline",
-      "content": "Sequence fragments (UTC): 08:12 inbound email with password-protected archive to Facilities coordinator; 08:19 user sign-in to M365 from normal campus IP; 08:27 same account grants OAuth consent to 'DocuView Sync'; 09:03 PowerShell starts on workstation FAC-WS-14 via WINWORD parent; 09:17 scheduled task 'OfficeUpdaterCheck' created; 10:11 SMB session from FAC-WS-14 to FILE-RSCH-02 using stolen token; 10:24 compressed archive staged in C:\\ProgramData\\temp\\fin_docs.7z; 10:31 outbound transfer attempt to cloud storage API blocked by firewall policy."
+      "content": "Sequence fragments (UTC): 08:12 inbound email with password-protected archive to Facilities coordinator; 08:19 user sign-in to M365 from normal campus IP; 08:27 same account grants OAuth consent to 'DocuView Sync'; 09:03 PowerShell starts on workstation FAC-WS-14 via WINWORD parent; 09:17 scheduled task 'OfficeUpdaterCheck' created; 10:11 SMB session from FAC-WS-14 to FILE-RSCH-02 using credential material consistent with cached Kerberos tickets or reused service credentials; 10:24 compressed archive staged in C:\\ProgramData\\temp\\fin_docs.7z; 10:31 outbound transfer attempt to cloud storage API blocked by firewall policy."
     },
     {
       "id": "E2",
       "type": "indicator",
-      "content": "Identity provider log: User j.hale@univ.edu completed MFA from known device, then within 9 minutes issued OAuth consent for appId 8f3c... with delegated Graph read/write mail and files permissions. Tenant policy logs show no admin approval workflow event for that app."
+      "content": "Identity provider log: User j.hale@univ.edu completed MFA from known device, then within 9 minutes issued OAuth consent for appId 8f3c... with delegated Graph read/write mail and files permissions. Tenant policy logs show no admin approval workflow event for that app. Governance context: tenant currently permits end users to grant delegated consent for some apps without admin approval, and review of new consents is largely post-facto."
     },
     {
       "id": "E3",
