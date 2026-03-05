@@ -1,6 +1,7 @@
 import week1FeedbackRules from '@/feedback/week1_feedback.json';
 import week2FeedbackRules from '@/feedback/week2_feedback.json';
 import week3FeedbackRules from '@/feedback/week3_feedback.json';
+import week4FeedbackRules from '@/feedback/week4_feedback.json';
 
 type DecisionLogEntry = {
   decisionId: string;
@@ -46,11 +47,23 @@ const feedbackRulesByWeek: Record<string, FeedbackRules> = {
   '1': week1FeedbackRules as FeedbackRules,
   '2': week2FeedbackRules as FeedbackRules,
   '3': week3FeedbackRules as FeedbackRules,
+  '4': week4FeedbackRules as FeedbackRules,
 };
 
 function getWeekKeyFromScenarioId(scenarioId: string): string {
-  const match = scenarioId.match(/week(\d+)/i);
-  return match?.[1] ?? '1';
+  const normalized = scenarioId.trim().toLowerCase();
+  const weekMatch = normalized.match(/week[-_]?0*(\d+)/i);
+
+  if (weekMatch?.[1]) {
+    return weekMatch[1];
+  }
+
+  const numericMatch = normalized.match(/^0*(\d+)$/);
+  if (numericMatch?.[1]) {
+    return numericMatch[1];
+  }
+
+  return '1';
 }
 
 function getFeedbackRules(scenarioId: string): FeedbackRules {
@@ -127,6 +140,51 @@ export function generateFeedback({ scenarioId, decisionLog, finalSelections }: G
     implications.push('Your actor profile is assertive but under-collected; add one collection action that could materially falsify or confirm your model in the next reporting cycle.');
   }
 
+
+  if (
+    supportsDimension('detection_logic') &&
+    supportsDimension('evidence_linkage') &&
+    (coverageCounts.detection_logic ?? 0) > 0 &&
+    (coverageCounts.evidence_linkage ?? 0) === 0
+  ) {
+    implications.push('You selected a detection interpretation path but did not anchor it to explicit evidence linkage; call out the exact telemetry artifacts that justify why alerts are signal versus noise.');
+  }
+
+  if (
+    supportsDimension('telemetry_quality') &&
+    supportsDimension('confidence_reasoning') &&
+    (coverageCounts.telemetry_quality ?? 0) > 0 &&
+    (coverageCounts.confidence_reasoning ?? 0) === 0
+  ) {
+    implications.push('You identified telemetry quality concerns without translating them into confidence reasoning; explain how missing or inconsistent fields should change certainty and decision urgency.');
+  }
+
+  if (
+    supportsDimension('false_positive_management') &&
+    supportsDimension('false_negative_risk') &&
+    (coverageCounts.false_positive_management ?? 0) > 0 &&
+    (coverageCounts.false_negative_risk ?? 0) === 0
+  ) {
+    implications.push('Your tuning path emphasized false-positive reduction more than false-negative exposure; include what stealth behaviors might evade detection after suppression or threshold changes.');
+  }
+
+  if (
+    supportsDimension('false_negative_risk') &&
+    supportsDimension('investigation_pivot') &&
+    (coverageCounts.false_negative_risk ?? 0) > 0 &&
+    (coverageCounts.investigation_pivot ?? 0) === 0
+  ) {
+    implications.push('Your path accepts meaningful false-negative risk but does not define an immediate investigative pivot; add 1–2 checks that would quickly validate whether tuning is masking active threat activity.');
+  }
+
+  if (
+    supportsDimension('tuning_action') &&
+    supportsDimension('mitigation_tradeoff') &&
+    (coverageCounts.tuning_action ?? 0) > 0 &&
+    (coverageCounts.mitigation_tradeoff ?? 0) > 0
+  ) {
+    implications.push('Your tuning recommendation is actionable; strengthen the report by quantifying expected alert-volume change and the specific operational tradeoff stakeholders should accept.');
+  }
   if (supportsDimension('next_move') && supportsDimension('mitigation') && (coverageCounts.next_move ?? 0) > 0 && (coverageCounts.mitigation ?? 0) === 0) {
     implications.push('You projected the likely next move without committing to a mitigation path; align your forecast with a concrete defensive priority and ownership.');
   }
