@@ -3,7 +3,7 @@
   "title": "Week 1: Foundations of Intelligence — Indicator vs. Intelligence",
   "briefing": {
     "narrative": "Campus leadership has asked the SOC to assess whether recent cyber activity against university systems represents meaningful intelligence about an imminent adversary objective, or merely disconnected indicators. Your task is to distinguish raw signal from contextual noise and produce a defensible analytic judgment.",
-    "instructions": "Review each evidence item, note reliability and context, and avoid over-weighting single indicators. Follow branch prompts to document your analytic path before selecting a primary hypothesis, risk level, and confidence level."
+    "instructions": "Review each evidence item, note reliability and context, and avoid over-weighting single indicators. Follow branch prompts to document your analytic path before selecting a primary hypothesis, risk level, and confidence level. Indicators such as IP addresses, domains, and account names are sanitized for training and may include reserved documentation ranges."
   },
   "evidence_items": [
     {
@@ -34,7 +34,7 @@
     {
       "id": "E6",
       "type": "report",
-      "content": "Internal vuln scan shows one outdated VPN appliance in a research subnet, but no active exploit telemetry in the last 24 hours."
+      "content": "Internal vuln scan shows one outdated legacy departmental VPN concentrator used by a research lab in a research subnet, but no active exploit telemetry in the last 24 hours."
     },
     {
       "id": "E7",
