@@ -15,6 +15,7 @@
       "confidence_reasoning",
       "evidence_linkage"
     ],
+
     "D5-02::Regular low-volume interval timing plus randomized DNS subdomains": [
       "network_beaconing",
       "dns_patterns",
@@ -32,6 +33,7 @@
       "evidence_linkage",
       "risk_reasoning"
     ],
+
     "D5-03::Command-and-control maintenance with tasking/check-in": [
       "evidence_linkage",
       "network_beaconing",
@@ -49,6 +51,7 @@
       "endpoint_to_network_linkage",
       "confidence_reasoning"
     ],
+
     "D5-04::Correlate service account job schedule, change ticket scope, and exact transfer destinations": [
       "investigation_pivot",
       "endpoint_to_network_linkage",
@@ -67,6 +70,7 @@
       "proxy_http_indicators",
       "evidence_linkage"
     ],
+
     "D5-05::Isolate RA-WS-22 immediately and rotate associated service credentials": [
       "containment_tradeoff",
       "evidence_linkage",
@@ -86,79 +90,82 @@
       "evidence_linkage"
     ]
   },
+
   "dimensionDescriptions": {
-    "network_beaconing": "Explain whether periodicity, low-and-slow transfer shape, and callback regularity indicate beaconing; justify why timing patterns are operationally meaningful rather than incidental.",
-    "network_exfiltration": "Explain whether observed flow volume, outbound/inbound asymmetry, staging timing, and destination characteristics support or weaken an exfiltration interpretation.",
-    "benign_traffic_explanations": "Explain plausible non-malicious causes (for example software updates, backups, SaaS synchronization, or admin tooling) and justify why they do or do not fit the observed sequence.",
-    "dns_patterns": "Explain DNS evidence such as TTL behavior, randomized or algorithmic subdomain patterns, and query cadence, and justify what these characteristics imply.",
-    "tls_metadata": "Explain how TLS metadata (for example SNI, certificate patterns, and JA3-style client fingerprint context) supports, contradicts, or fails to discriminate between hypotheses.",
-    "proxy_http_indicators": "Explain what proxy/HTTP details (user-agent shifts, status code patterns, request methods, byte counts, and transfer windows) reveal about likely intent and activity type.",
-    "endpoint_to_network_linkage": "Explain how endpoint process/user/service context links to network behavior, including parent-child lineage, execution context, and whether behavior aligns with expected software function.",
-    "investigation_pivot": "Explain the single highest-value next check (or top two), why it reduces uncertainty fastest, and what specific outcome would change your conclusion.",
-    "containment_tradeoff": "Explain containment choice tradeoffs, including disruption risk, visibility loss, evidence preservation impact, and how to mitigate downside.",
-    "risk_reasoning": "Explain how selected risk level follows from likely impact, exposure, and current evidence quality rather than isolated indicators.",
-    "confidence_reasoning": "Explain how confidence level is justified by corroboration strength, competing interpretations, and telemetry limitations.",
-    "evidence_linkage": "Explain which concrete artifacts support each major claim and clearly separate direct evidence from inference.",
-    "hypothesis_alignment": "Explain how your final hypothesis aligns with your decision path and why alternatives are less defensible at this stage."
+    "network_beaconing": "Explain whether periodic timing patterns or low-volume callback traffic may indicate command-and-control activity and why these patterns are operationally meaningful.",
+    "network_exfiltration": "Explain whether traffic volume, directionality, and destination characteristics suggest possible data staging or exfiltration behavior.",
+    "benign_traffic_explanations": "Consider plausible legitimate explanations such as SaaS synchronization, automated backups, or system maintenance and explain why they may or may not fit the observed activity.",
+    "dns_patterns": "Explain DNS characteristics such as query timing, subdomain structure, or TTL behavior and what these patterns might imply.",
+    "tls_metadata": "Explain how TLS metadata such as certificate patterns or SNI behavior may support or weaken a given interpretation.",
+    "proxy_http_indicators": "Explain what proxy or HTTP indicators (user-agent shifts, byte counts, request timing) may reveal about the nature of the activity.",
+    "endpoint_to_network_linkage": "Explain how endpoint context such as process lineage, user activity, or scheduled jobs may relate to the network behavior.",
+    "investigation_pivot": "Identify one or two investigative checks that could most quickly reduce uncertainty and explain why they would be informative.",
+    "containment_tradeoff": "Explain the operational tradeoffs associated with a containment action, including potential business impact or loss of visibility.",
+    "risk_reasoning": "Explain why the selected risk level follows logically from the potential impact and available evidence.",
+    "confidence_reasoning": "Explain why the chosen confidence level reflects the strength and limitations of the available evidence.",
+    "evidence_linkage": "Explain which specific artifacts support key conclusions and clearly distinguish evidence from inference.",
+    "hypothesis_alignment": "Explain how the final assessment aligns with the reasoning process used during the simulation."
   },
+
   "reportSections": [
     {
       "title": "Executive Summary",
-      "template": "State your current network finding (beaconing, exfiltration, benign, or blended), business-relevant risk statement, and immediate recommendation in concise decision language."
+      "template": "Briefly summarize the most likely interpretation of the network activity, the associated risk, and the immediate recommendation."
     },
     {
-      "title": "Traffic Characterization",
-      "template": "Describe the dominant traffic pattern and why it matters: periodicity, burst behavior, directionality, destination type, and whether it is more consistent with beaconing, exfiltration, or sanctioned automation."
+      "title": "Traffic Pattern Interpretation",
+      "template": "Explain the dominant traffic pattern including timing behavior, directionality, and destination characteristics, and why it may suggest beaconing, exfiltration, or benign automation."
     },
     {
-      "title": "Key Evidence (3\u20136 artifacts)",
-      "template": "List 3\u20136 high-value artifacts (for example DNS cadence, TLS metadata, proxy byte counts, endpoint lineage, change ticket timing) and state exactly what each artifact supports or weakens."
+      "title": "Key Evidence",
+      "template": "Identify several important artifacts and explain how each supports or weakens the current interpretation."
     },
     {
-      "title": "Hypothesis and Alternatives",
-      "template": "Defend your leading hypothesis and at least one alternative interpretation, then explain why your chosen interpretation is currently the most defensible."
+      "title": "Hypothesis and Alternative Interpretations",
+      "template": "Explain the leading hypothesis and briefly consider at least one alternative explanation."
     },
     {
-      "title": "Confidence and Uncertainty",
-      "template": "State confidence level, justify why it is not higher or lower, and identify specific unknowns or telemetry limits that could materially change the assessment."
+      "title": "Confidence and Remaining Uncertainty",
+      "template": "Explain the confidence level and identify remaining unknowns that could affect the assessment."
     },
     {
-      "title": "Investigation Pivot Plan",
-      "template": "Name the top 1\u20132 next checks that reduce uncertainty fastest and define the discriminating outcomes that would confirm, weaken, or reverse your conclusion."
+      "title": "Next Investigative Steps",
+      "template": "Describe one or two investigative actions that could most effectively confirm or challenge the current interpretation."
     },
     {
-      "title": "Containment Recommendation and Tradeoffs",
-      "template": "Recommend immediate containment posture, then explicitly state visibility/evidence-preservation loss and business impact, plus compensating controls for those downsides."
+      "title": "Containment Considerations",
+      "template": "Discuss possible containment actions and the operational tradeoffs associated with each approach."
     },
     {
-      "title": "Professional Conclusion (next 24\u201372 hours)",
-      "template": "Provide an actionable 24\u201372 hour plan with ownership, telemetry to monitor, and decision triggers for escalation, containment adjustment, or de-escalation."
+      "title": "Professional Conclusion",
+      "template": "Provide a short operational recommendation and outline the next monitoring or investigation steps."
     }
   ],
+
   "gapRules": [
     {
       "id": "missing_investigation_pivot",
       "dimension": "investigation_pivot",
       "minCount": 1,
-      "prompt": "Specify the single highest-value next check and the exact discriminating result you expect that would separate beaconing, exfiltration, and benign automation interpretations."
+      "prompt": "Consider identifying one investigative check that could most quickly clarify whether the activity represents beaconing, exfiltration, or legitimate automation."
     },
     {
       "id": "missing_endpoint_to_network_linkage",
       "dimension": "endpoint_to_network_linkage",
       "minCount": 1,
-      "prompt": "Link at least one process/user/service context detail to the network behavior and explain why that linkage strengthens or weakens your hypothesis."
+      "prompt": "You may want to connect at least one endpoint activity (process, user action, or scheduled task) to the observed network behavior."
     },
     {
       "id": "missing_containment_tradeoff",
       "dimension": "containment_tradeoff",
       "minCount": 1,
-      "prompt": "State one concrete downside of your containment choice (visibility, evidence preservation, or business disruption) and one compensating control to reduce that downside."
+      "prompt": "Consider discussing one operational tradeoff associated with the recommended containment approach."
     },
     {
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Justify your confidence level explicitly by tying evidence strength and unresolved telemetry limits to why confidence is low, medium, or high."
+      "prompt": "Explain why the selected confidence level appropriately reflects both the evidence available and remaining uncertainty."
     }
   ]
 }
