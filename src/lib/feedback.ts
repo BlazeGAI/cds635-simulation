@@ -2,6 +2,7 @@ import week1FeedbackRules from '@/feedback/week1_feedback.json';
 import week2FeedbackRules from '@/feedback/week2_feedback.json';
 import week3FeedbackRules from '@/feedback/week3_feedback.json';
 import week4FeedbackRules from '@/feedback/week4_feedback.json';
+import week5FeedbackRules from '@/feedback/week5_feedback.json';
 
 type DecisionLogEntry = {
   decisionId: string;
@@ -48,6 +49,7 @@ const feedbackRulesByWeek: Record<string, FeedbackRules> = {
   '2': week2FeedbackRules as FeedbackRules,
   '3': week3FeedbackRules as FeedbackRules,
   '4': week4FeedbackRules as FeedbackRules,
+  '5': week5FeedbackRules as FeedbackRules,
 };
 
 function getWeekKeyFromScenarioId(scenarioId: string): string {
@@ -189,6 +191,28 @@ export function generateFeedback({ scenarioId, decisionLog, finalSelections }: G
     implications.push('You projected the likely next move without committing to a mitigation path; align your forecast with a concrete defensive priority and ownership.');
   }
 
+  if (
+    supportsDimension('network_beaconing') &&
+    supportsDimension('network_exfiltration') &&
+    supportsDimension('benign_traffic_explanations')
+  ) {
+    const beaconingCount = coverageCounts.network_beaconing ?? 0;
+    const exfilCount = coverageCounts.network_exfiltration ?? 0;
+    const benignCount = coverageCounts.benign_traffic_explanations ?? 0;
+
+    if (beaconingCount > exfilCount && beaconingCount >= benignCount) {
+      implications.push('Your decision path leans toward beaconing behavior; strengthen this by distinguishing callback periodicity from routine scheduler-driven SaaS polling and stating what would invalidate a C2 interpretation.');
+    }
+
+    if (exfilCount > beaconingCount && exfilCount >= benignCount) {
+      implications.push('Your decision path leans toward exfiltration; quantify why outbound volume, staging sequence, and destination behavior are more consistent with data theft than sanctioned bulk transfer.');
+    }
+
+    if (benignCount > beaconingCount && benignCount >= exfilCount) {
+      implications.push('Your decision path leans toward benign automation; explicitly justify why suspicious overlaps (for example randomized subdomains or mixed user-agents) are acceptable under the documented operational context.');
+    }
+  }
+
   if (implications.length < 4) {
     implications.push('Your report should connect each major choice to expected operational impact so decision-makers can see why the selected path is practical now.');
     implications.push('Frame your conclusions as a current working assessment and identify what new evidence would most likely strengthen or revise that assessment.');
@@ -197,6 +221,17 @@ export function generateFeedback({ scenarioId, decisionLog, finalSelections }: G
   const gapPrompts = rules.gapRules
     .filter((rule) => (coverageCounts[rule.dimension] ?? 0) < rule.minCount)
     .map((rule) => rule.prompt);
+
+  if (
+    supportsDimension('dns_patterns') &&
+    supportsDimension('tls_metadata') &&
+    supportsDimension('proxy_http_indicators') &&
+    (coverageCounts.dns_patterns ?? 0) === 0 &&
+    (coverageCounts.tls_metadata ?? 0) === 0 &&
+    (coverageCounts.proxy_http_indicators ?? 0) === 0
+  ) {
+    gapPrompts.push('Cite at least one specific network characteristic (DNS behavior, TLS metadata, or proxy/HTTP indicators) and explain why it materially supports your conclusion.');
+  }
 
   const firstDecision = decisionLog[0];
   const lastDecision = decisionLog[decisionLog.length - 1];
