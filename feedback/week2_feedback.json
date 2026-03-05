@@ -1,0 +1,97 @@
+{
+  "dimensionTags": {
+    "D1::Financial gain through extortion or data monetization": ["adversary_modeling", "intent", "targeting", "risk_reasoning"],
+    "D1::Strategic intelligence collection aligned with espionage interests": ["adversary_modeling", "intent", "capability", "targeting", "confidence_reasoning"],
+    "D1::Disruption or influence activity with hacktivist framing": ["adversary_modeling", "intent", "targeting", "confidence_reasoning"],
+
+    "D2::Moderate capability: opportunistic tradecraft plus potentially purchased access": ["adversary_modeling", "capability", "risk_reasoning"],
+    "D2::High capability: coordinated multi-vector operation with disciplined OPSEC": ["adversary_modeling", "capability", "risk_reasoning", "confidence_reasoning"],
+    "D2::Uncertain/fragmented capability: mixed signals could reflect multiple unrelated actors": ["adversary_modeling", "capability", "confidence_reasoning"],
+
+    "D3::Follow-on credential operations to expand privileged access before overt action": ["next_move", "targeting", "risk_reasoning"],
+    "D3::Targeted data staging and selective leak threats to pressure payment": ["next_move", "intent", "targeting", "risk_reasoning"],
+    "D3::Narrative amplification and public claims without significant technical escalation": ["next_move", "intent", "confidence_reasoning"],
+
+    "D4::Correlate identity logs, contractor VPN telemetry, and privileged service-account token history": ["collection", "adversary_modeling", "confidence_reasoning"],
+    "D4::Acquire cloud egress packet metadata and endpoint process lineage for suspected hosts": ["collection", "capability", "confidence_reasoning"],
+    "D4::Prioritize HUMINT/vendor verification on recent access-change requests and support channels": ["collection", "intent", "targeting"],
+
+    "D5::Constrain privileged pathways (conditional access, token revocation, segmented admin workflows)": ["mitigation", "tradeoff", "risk_reasoning"],
+    "D5::Focus on data-loss controls and legal/comms preparation for possible extortion escalation": ["mitigation", "tradeoff", "intent", "risk_reasoning"],
+    "D5::Execute broad resilience posture uplift while preserving evidence for attribution refinement": ["mitigation", "tradeoff", "capability", "confidence_reasoning"]
+  },
+  "dimensionDescriptions": {
+    "adversary_modeling": "How clearly the report defines likely actor type and operating model under uncertainty.",
+    "intent": "Reasoned statement of what the actor is trying to achieve and why it fits the evidence.",
+    "capability": "Assessment of actor sophistication, access quality, and operational discipline.",
+    "targeting": "Explanation of who or what is being prioritized and why that targeting is plausible.",
+    "next_move": "Forecast of likely adversary behavior in the next 24–72 hours.",
+    "collection": "Concrete collection actions that would materially reduce uncertainty.",
+    "mitigation": "Immediate defensive actions matched to likely impact and operational constraints.",
+    "tradeoff": "Acknowledgment of downside, friction, and second-order effects of chosen mitigations.",
+    "risk_reasoning": "Explicit rationale for risk level tied to impact and likelihood.",
+    "confidence_reasoning": "Explicit rationale for confidence level tied to evidence quality and gaps."
+  },
+  "reportSections": [
+    {
+      "title": "Executive Summary",
+      "template": "In 3–5 sentences, state the leading actor hypothesis, current risk, confidence, and the most important operational decision needed now."
+    },
+    {
+      "title": "Threat Actor Assessment",
+      "template": "Summarize likely intent, capability, and targeting with concise justification from the scenario evidence."
+    },
+    {
+      "title": "Evidence-to-Hypothesis Linkage",
+      "template": "Cite 3–5 specific evidence items from the simulation and explain how each supports, weakens, or complicates your selected hypothesis."
+    },
+    {
+      "title": "Uncertainty and Collection Plan",
+      "template": "Identify major unknowns and list the top 1–2 collection actions most likely to change your assessment."
+    },
+    {
+      "title": "Risk and Confidence Rationale",
+      "template": "Justify both risk and confidence levels using impact, likelihood, corroboration, and unresolved uncertainty."
+    },
+    {
+      "title": "Recommendations and Tradeoffs",
+      "template": "Recommend the immediate mitigation path, then state its downside and one compensating control to manage that downside."
+    },
+    {
+      "title": "Professional Conclusion",
+      "template": "Close with a concise 24–72 hour outlook, decision trigger points, and who should own the next actions."
+    }
+  ],
+  "gapRules": [
+    {
+      "id": "missing_collection",
+      "dimension": "collection",
+      "minCount": 1,
+      "prompt": "Add a specific collection plan (1–2 concrete actions) and explain exactly what each result would confirm, refute, or re-prioritize."
+    },
+    {
+      "id": "missing_tradeoff",
+      "dimension": "tradeoff",
+      "minCount": 1,
+      "prompt": "State the downside of your chosen mitigation and name a compensating control that reduces that downside."
+    },
+    {
+      "id": "weak_adversary_modeling",
+      "dimension": "adversary_modeling",
+      "minCount": 2,
+      "prompt": "Strengthen adversary modeling by explicitly connecting actor intent, capability, and targeting to the evidence trail."
+    },
+    {
+      "id": "missing_risk_reasoning",
+      "dimension": "risk_reasoning",
+      "minCount": 1,
+      "prompt": "Provide explicit risk reasoning tied to likely impact, exposure, and attacker opportunity."
+    },
+    {
+      "id": "missing_confidence_reasoning",
+      "dimension": "confidence_reasoning",
+      "minCount": 1,
+      "prompt": "Provide explicit confidence reasoning tied to source quality, corroboration, and unresolved gaps."
+    }
+  ]
+}
