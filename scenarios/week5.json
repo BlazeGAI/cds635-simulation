@@ -3,7 +3,7 @@
   "title": "Week 5: Network Behavior Assessment — Beaconing vs Exfiltration vs Benign Traffic",
   "briefing": {
     "narrative": "The university SOC is triaging unusual encrypted outbound traffic from a research administration workstation and adjacent service hosts. Leadership wants an initial analytic judgment before authorizing disruptive containment. Available telemetry includes network summaries, DNS behavior, TLS metadata, proxy logs, endpoint process context, and competing analyst interpretations. Some evidence suggests command-and-control beaconing, while other artifacts could fit legitimate SaaS synchronization or scheduled backup behavior.",
-    "instructions": "Evaluate encrypted outbound traffic patterns, distinguish possible C2 beaconing from benign SaaS/API traffic, assess the likelihood of staged data exfiltration, and identify the highest-confidence investigative pivot. Follow the decision path to record your reasoning under uncertainty before selecting your final hypothesis, risk level, and confidence."
+    "instructions": "Evaluate encrypted outbound traffic patterns, distinguish possible C2 beaconing from benign SaaS/API traffic, assess the likelihood of staged data exfiltration, and identify the highest-confidence investigative pivot. Follow the decision path to record your reasoning under uncertainty before selecting your final hypothesis, risk level, and confidence. Indicators such as IP addresses, domains, and account names are sanitized for training and may include reserved documentation ranges."
   },
   "evidence_items": [
     {
@@ -39,7 +39,7 @@
     {
       "id": "E5-07",
       "type": "report",
-      "content": "Change-management ticket CHG-7781: Research Computing approved pilot deployment of ResearchSyncClient 4.8.x and BackupAgent policy update for offsite archival between 11:30-12:00 UTC on weekdays. Expected behavior includes short health-check API calls plus periodic bulk transfer of encrypted project snapshots to cloud object storage endpoints."
+      "content": "Change-management ticket CHG-7781: Research Computing approved pilot deployment of ResearchSyncClient 4.8.x and BackupAgent policy update for offsite archival between 11:30-12:00 UTC on weekdays. Expected behavior includes short health-check API calls plus periodic bulk transfer of encrypted project snapshots to cloud object storage endpoints. Deployment notes for this pilot indicate the helper may invoke PowerShell (sometimes base64-encoding parameters) to register scheduled tasks and pass configuration to the signed client."
     },
     {
       "id": "E5-08",
