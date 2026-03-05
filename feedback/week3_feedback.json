@@ -1,0 +1,177 @@
+{
+  "dimensionTags": {
+    "D3-01::User opened malicious invoice attachment leading to macro execution": [
+      "lifecycle_initial_access",
+      "lifecycle_execution",
+      "evidence_linkage",
+      "risk_reasoning"
+    ],
+    "D3-01::OAuth consent abuse was the primary foothold, with host execution occurring later": [
+      "lifecycle_initial_access",
+      "evidence_linkage",
+      "confidence_reasoning"
+    ],
+    "D3-01::Pre-existing compromised service account enabled access before user interaction": [
+      "lifecycle_initial_access",
+      "evidence_linkage",
+      "uncertainty_collection",
+      "confidence_reasoning"
+    ],
+    "D3-02::Scheduled task plus AV exclusion on FAC-WS-14 provided durable host persistence": [
+      "lifecycle_persistence",
+      "lifecycle_execution",
+      "evidence_linkage",
+      "risk_reasoning"
+    ],
+    "D3-02::Delegated OAuth app permissions maintained access to user data and tokens": [
+      "lifecycle_persistence",
+      "evidence_linkage",
+      "detection_gap"
+    ],
+    "D3-02::Abuse of legacy backup service identity was the key long-lived foothold": [
+      "lifecycle_persistence",
+      "evidence_linkage",
+      "risk_reasoning",
+      "confidence_reasoning"
+    ],
+    "D3-03::FAC-WS-14 to FILE-RSCH-02 via SMB token reuse, then directory reconnaissance": [
+      "lifecycle_lateral_movement",
+      "lifecycle_objective_impact",
+      "evidence_linkage",
+      "risk_reasoning"
+    ],
+    "D3-03::Direct pivot to domain services for privilege escalation before file access": [
+      "lifecycle_lateral_movement",
+      "lifecycle_execution",
+      "uncertainty_collection",
+      "confidence_reasoning"
+    ],
+    "D3-03::Cloud-to-cloud movement through OAuth scope abuse without meaningful host pivot": [
+      "lifecycle_lateral_movement",
+      "lifecycle_objective_impact",
+      "evidence_linkage",
+      "confidence_reasoning"
+    ],
+    "D3-04::Loss of east-west packet visibility during the pivot window": [
+      "detection_gap",
+      "uncertainty_collection",
+      "confidence_reasoning"
+    ],
+    "D3-04::No enforced admin consent controls for risky OAuth permissions": [
+      "detection_gap",
+      "mitigation_breakpoint",
+      "tradeoff"
+    ],
+    "D3-04::Incomplete endpoint lineage due to EDR sensor health drift": [
+      "detection_gap",
+      "uncertainty_collection",
+      "confidence_reasoning"
+    ],
+    "D3-05::Revoke suspicious OAuth grants + enforce conditional access/app consent policies": [
+      "mitigation_breakpoint",
+      "tradeoff",
+      "lifecycle_initial_access",
+      "risk_reasoning"
+    ],
+    "D3-05::Disable legacy backup service identity + segment SMB access from user workstations": [
+      "mitigation_breakpoint",
+      "tradeoff",
+      "lifecycle_lateral_movement",
+      "risk_reasoning",
+      "lifecycle_objective_impact"
+    ],
+    "D3-05::Block macro-enabled archives at gateway + harden script execution controls": [
+      "mitigation_breakpoint",
+      "tradeoff",
+      "lifecycle_execution",
+      "lifecycle_initial_access"
+    ],
+    "D3-05::Restore east-west telemetry coverage + alert on rapid archive staging and egress attempts": [
+      "mitigation_breakpoint",
+      "tradeoff",
+      "detection_gap",
+      "lifecycle_objective_impact",
+      "uncertainty_collection"
+    ]
+  },
+  "dimensionDescriptions": {
+    "lifecycle_initial_access": "Explain the most defensible entry point and the evidence that supports that sequencing.",
+    "lifecycle_execution": "Explain where malicious execution likely occurred and why that execution assessment matters.",
+    "lifecycle_persistence": "Explain the foothold that most likely sustained attacker access over time.",
+    "lifecycle_lateral_movement": "Explain how access likely moved between systems, identities, or environments.",
+    "lifecycle_objective_impact": "Explain the most likely attacker objective and potential operational impact if the chain continued.",
+    "detection_gap": "Explain the most critical visibility gap and how it constrained analytic certainty.",
+    "mitigation_breakpoint": "Explain which interruption point would most effectively break the intrusion chain.",
+    "evidence_linkage": "Explain which evidence items directly support each major analytic claim.",
+    "uncertainty_collection": "Explain what data to collect next to reduce uncertainty in the current narrative.",
+    "risk_reasoning": "Explain why the selected risk level follows from likely impact, exposure, and attacker opportunity.",
+    "confidence_reasoning": "Explain why the selected confidence level is justified by corroboration and remaining gaps.",
+    "tradeoff": "Explain operational tradeoffs of the selected defensive actions and feasibility constraints."
+  },
+  "reportSections": [
+    {
+      "title": "Executive Summary (operationally framed)",
+      "template": "In 3\u20135 sentences, state the leading intrusion narrative, current operational risk, confidence level, and the highest-priority decision for leadership now."
+    },
+    {
+      "title": "Intrusion Narrative (staged timeline across lifecycle)",
+      "template": "Describe a coherent timeline from initial access through execution, persistence, lateral movement, and likely objective/impact, noting where sequencing is uncertain."
+    },
+    {
+      "title": "Evidence Summary (3\u20136 key items, why each matters)",
+      "template": "List 3\u20136 strongest evidence items and briefly explain how each item supports, challenges, or qualifies your lifecycle narrative."
+    },
+    {
+      "title": "Primary Hypothesis and Alternatives (why yours is most defensible)",
+      "template": "State your selected primary hypothesis, then compare at least one plausible alternative and justify why your choice is currently most defensible."
+    },
+    {
+      "title": "Detection Gap Analysis (most critical gap, how it affected confidence)",
+      "template": "Identify the single most critical visibility gap, explain how it constrained confidence, and specify the practical consequence for response decisions."
+    },
+    {
+      "title": "Mitigation Breakpoints (top 1\u20132 breakpoints, tradeoffs and feasibility)",
+      "template": "Recommend the top 1\u20132 breakpoints to disrupt the chain, then state implementation tradeoffs, dependencies, and near-term feasibility."
+    },
+    {
+      "title": "Collection Plan (what to collect next to reduce uncertainty)",
+      "template": "Name 1\u20132 immediate collection actions and explain how each likely result would increase, decrease, or preserve your current confidence level."
+    },
+    {
+      "title": "Professional Conclusion (next 24\u201372 hour actions)",
+      "template": "Close with concrete 24\u201372 hour actions, responsible owners, and trigger conditions that would require reassessment."
+    }
+  ],
+  "gapRules": [
+    {
+      "id": "missing_detection_gap",
+      "dimension": "detection_gap",
+      "minCount": 1,
+      "prompt": "Name the most critical detection gap, the consequence of that blind spot, and one practical remedy to reduce the gap."
+    },
+    {
+      "id": "missing_mitigation_breakpoint",
+      "dimension": "mitigation_breakpoint",
+      "minCount": 1,
+      "prompt": "Specify at least one mitigation breakpoint that could disrupt the chain and include the main operational tradeoff."
+    },
+    {
+      "id": "missing_uncertainty_collection",
+      "dimension": "uncertainty_collection",
+      "minCount": 1,
+      "prompt": "Add 1\u20132 immediate collection actions and state exactly how each outcome would change your confidence."
+    },
+    {
+      "id": "weak_lifecycle_coverage",
+      "dimension": "lifecycle_objective_impact",
+      "minCount": 2,
+      "prompt": "Strengthen end-to-end lifecycle coverage by writing a coherent narrative from initial access through objective/impact, including at least one transition rationale."
+    },
+    {
+      "id": "missing_confidence_reasoning",
+      "dimension": "confidence_reasoning",
+      "minCount": 1,
+      "prompt": "Explicitly justify your confidence level and tie that justification to corroborated evidence and unresolved uncertainty."
+    }
+  ]
+}
