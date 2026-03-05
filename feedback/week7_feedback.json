@@ -104,13 +104,13 @@
       "id": "missing_risk_reasoning",
       "dimension": "risk_reasoning",
       "minCount": 1,
-      "prompt": "Explain how the available evidence supports the selected risk level using both impact and likelihood considerations."
+      "prompt": "It may help to explain how the available evidence supports the selected risk level using both impact and likelihood considerations."
     },
     {
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Explain how the evidence and remaining uncertainty justify the selected confidence level."
+      "prompt": "It may help to explain how the evidence and remaining uncertainty support the selected confidence level."
     }
   ]
 }

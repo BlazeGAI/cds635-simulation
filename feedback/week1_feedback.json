@@ -62,7 +62,7 @@
       "id": "missing_collection",
       "dimension": "collection",
       "minCount": 1,
-      "prompt": "Consider including a short collection plan that names one or two concrete data sources (such as SSO logs, endpoint telemetry, or email logs) and explains how each would reduce uncertainty."
+      "prompt": "Consider including a short collection plan that lists one or two concrete data sources (such as SSO logs, endpoint telemetry, or email logs) and explains how each could reduce uncertainty."
     },
     {
       "id": "missing_detection_gap",
@@ -80,13 +80,13 @@
       "id": "missing_risk_reasoning",
       "dimension": "risk_reasoning",
       "minCount": 1,
-      "prompt": "Explain how your selected risk level relates to likely impact and probability rather than relying only on the number of indicators observed."
+      "prompt": "It may help to explain how your selected risk level relates to likely impact and probability rather than relying only on the number of indicators observed."
     },
     {
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Describe why you selected this confidence level and what additional information would increase your confidence in the assessment."
+      "prompt": "You may want to describe why this confidence level fits the current evidence and what additional information could raise confidence in the assessment."
     }
   ]
 }

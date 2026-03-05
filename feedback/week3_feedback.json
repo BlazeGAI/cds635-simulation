@@ -147,31 +147,31 @@
       "id": "missing_detection_gap",
       "dimension": "detection_gap",
       "minCount": 1,
-      "prompt": "Name the most critical detection gap, the consequence of that blind spot, and one practical remedy to reduce the gap."
+      "prompt": "Consider identifying the most critical detection gap, explaining the consequence of that blind spot, and noting one practical remedy that could reduce the gap."
     },
     {
       "id": "missing_mitigation_breakpoint",
       "dimension": "mitigation_breakpoint",
       "minCount": 1,
-      "prompt": "Specify at least one mitigation breakpoint that could disrupt the chain and include the main operational tradeoff."
+      "prompt": "You may want to describe at least one mitigation breakpoint that could disrupt the chain and include the main operational tradeoff."
     },
     {
       "id": "missing_uncertainty_collection",
       "dimension": "uncertainty_collection",
       "minCount": 1,
-      "prompt": "Add 1\u20132 immediate collection actions and state exactly how each outcome would change your confidence."
+      "prompt": "Consider including one or two immediate collection actions and explaining how each outcome could change your confidence."
     },
     {
       "id": "weak_lifecycle_coverage",
       "dimension": "lifecycle_objective_impact",
       "minCount": 2,
-      "prompt": "Strengthen end-to-end lifecycle coverage by writing a coherent narrative from initial access through objective/impact, including at least one transition rationale."
+      "prompt": "You could strengthen end-to-end lifecycle coverage by presenting a coherent narrative from initial access through objective and impact, including at least one transition rationale."
     },
     {
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Explicitly justify your confidence level and tie that justification to corroborated evidence and unresolved uncertainty."
+      "prompt": "It may help to justify your confidence level by connecting it to corroborated evidence and unresolved uncertainty."
     }
   ]
 }

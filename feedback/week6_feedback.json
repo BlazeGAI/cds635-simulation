@@ -109,7 +109,7 @@
       "id": "missing_prioritization",
       "dimension": "prioritization",
       "minCount": 1,
-      "prompt": "Explain why the selected response action appears most important at this stage."
+      "prompt": "It may help to explain why the selected response action appears most important at this stage."
     },
     {
       "id": "missing_evidence_preservation",
@@ -127,7 +127,7 @@
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Explain how the available evidence supports the chosen confidence level."
+      "prompt": "It may help to explain how the available evidence supports the chosen confidence level."
     },
     {
       "id": "missing_uncertainty_collection",
