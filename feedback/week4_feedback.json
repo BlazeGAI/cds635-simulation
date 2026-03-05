@@ -1,103 +1,101 @@
 {
   "dimensionTags": {
-    "D4-01::Prioritize endpoint script execution on BIO-LAB-WS17 as higher-signal; treat most auth and DNS spikes as potentially noisy until correlated.": ["detection_logic", "evidence_linkage", "risk_reasoning"],
-    "D4-01::Prioritize repeated foreign authentication failures as primary signal; treat endpoint and DNS artifacts as secondary noise for now.": ["detection_logic", "evidence_linkage", "risk_reasoning"],
+    "D4-01::Prioritize endpoint script execution on BIO-LAB-WS17 as higher-signal; treat most auth and DNS spikes as potentially noisy until correlated.": ["detection_logic","evidence_linkage","risk_reasoning"],
+    "D4-01::Prioritize repeated foreign authentication failures as primary signal; treat endpoint and DNS artifacts as secondary noise for now.": ["detection_logic","evidence_linkage","risk_reasoning"],
 
-    "D4-02A::Rule thresholds and suppressions are outdated for current operations, and field completeness issues reduce precision for endpoint detections.": ["telemetry_quality", "false_positive_management", "detection_logic", "evidence_linkage", "confidence_reasoning"],
-    "D4-02A::The AI summary is sufficiently reliable, so operational context should be de-emphasized in favor of rapid lockout actions.": ["risk_reasoning", "mitigation_tradeoff", "false_negative_risk"],
-    "D4-02B::Authentication rule logic overweights geography and ignores recent trusted-session context, inflating false positives.": ["detection_logic", "false_positive_management", "telemetry_quality", "evidence_linkage"],
-    "D4-02B::Noise is minimal; current detections already balance sensitivity and specificity effectively.": ["detection_logic", "risk_reasoning", "confidence_reasoning"],
+    "D4-02A::Rule thresholds and suppressions are outdated for current operations, and field completeness issues reduce precision for endpoint detections.": ["telemetry_quality","false_positive_management","detection_logic","evidence_linkage","confidence_reasoning"],
+    "D4-02A::The AI summary is sufficiently reliable, so operational context should be de-emphasized in favor of rapid lockout actions.": ["risk_reasoning","mitigation_tradeoff","false_negative_risk"],
 
-    "D4-03::Incomplete process command-line telemetry on endpoints, which weakens triage of script-based execution alerts.": ["detection_gap", "telemetry_quality", "evidence_linkage", "confidence_reasoning"],
-    "D4-03::Partial DNS coverage and delayed cloud audit logs, which can hide low-noise command-and-control or staging behavior.": ["detection_gap", "telemetry_quality", "false_negative_risk", "evidence_linkage"],
-    "D4-03::Inconsistent hostname normalization across tools, which impairs reliable cross-source correlation.": ["detection_gap", "telemetry_quality", "evidence_linkage", "investigation_pivot"],
+    "D4-02B::Authentication rule logic overweights geography and ignores recent trusted-session context, inflating false positives.": ["detection_logic","false_positive_management","telemetry_quality","evidence_linkage"],
+    "D4-02B::Noise is minimal; current detections already balance sensitivity and specificity effectively.": ["detection_logic","risk_reasoning","confidence_reasoning"],
 
-    "D4-04::Tune RULE-ATH-221 by adding trusted-session and managed-device context plus short suppression windows for known scanner IPs; keep alerting but lower priority when corroboration is absent.": ["tuning_action", "mitigation_tradeoff", "false_positive_management", "false_negative_risk", "detection_logic"],
-    "D4-04::Increase all thresholds broadly to reduce analyst workload immediately, accepting higher risk of missed stealth activity.": ["tuning_action", "mitigation_tradeoff", "false_negative_risk", "risk_reasoning"],
-    "D4-04::Split endpoint script rule into high-confidence parent-child patterns versus low-confidence generic script use, with different severities and response queues.": ["tuning_action", "mitigation_tradeoff", "false_positive_management", "detection_logic", "evidence_linkage"],
+    "D4-03::Incomplete process command-line telemetry on endpoints, which weakens triage of script-based execution alerts.": ["detection_gap","telemetry_quality","evidence_linkage","confidence_reasoning"],
+    "D4-03::Partial DNS coverage and delayed cloud audit logs, which can hide low-noise command-and-control or staging behavior.": ["detection_gap","telemetry_quality","false_negative_risk","evidence_linkage"],
+    "D4-03::Inconsistent hostname normalization across tools, which impairs reliable cross-source correlation.": ["detection_gap","telemetry_quality","evidence_linkage","investigation_pivot"],
 
-    "D4-05::Isolate BIO-LAB-WS17 from sensitive segments, force token revocation for impacted user accounts, and run focused hunt queries across recent script/network indicators.": ["investigation_pivot", "mitigation_tradeoff", "risk_reasoning", "evidence_linkage"],
-    "D4-05::Deploy temporary watchlists for 198.51.100.77 and abnormal DNS burst hosts, with hourly analyst review and no immediate endpoint isolation.": ["investigation_pivot", "mitigation_tradeoff", "false_negative_risk", "telemetry_quality"],
-    "D4-05::Pause containment and gather 24 more hours of baseline data before taking action to avoid disrupting operations.": ["mitigation_tradeoff", "false_negative_risk", "confidence_reasoning"]
+    "D4-04::Tune RULE-ATH-221 by adding trusted-session and managed-device context plus short suppression windows for known scanner IPs; keep alerting but lower priority when corroboration is absent.": ["tuning_action","mitigation_tradeoff","false_positive_management","false_negative_risk","detection_logic"],
+    "D4-04::Increase all thresholds broadly to reduce analyst workload immediately, accepting higher risk of missed stealth activity.": ["tuning_action","mitigation_tradeoff","false_negative_risk","risk_reasoning"],
+    "D4-04::Split endpoint script rule into high-confidence parent-child patterns versus low-confidence generic script use, with different severities and response queues.": ["tuning_action","mitigation_tradeoff","false_positive_management","detection_logic","evidence_linkage"],
+
+    "D4-05::Isolate BIO-LAB-WS17 from sensitive segments, force token revocation for impacted user accounts, and run focused hunt queries across recent script/network indicators.": ["investigation_pivot","mitigation_tradeoff","risk_reasoning","evidence_linkage"],
+    "D4-05::Deploy temporary watchlists for 198.51.100.77 and abnormal DNS burst hosts, with hourly analyst review and no immediate endpoint isolation.": ["investigation_pivot","mitigation_tradeoff","false_negative_risk","telemetry_quality"],
+    "D4-05::Pause containment and gather 24 more hours of baseline data before taking action to avoid disrupting operations.": ["mitigation_tradeoff","false_negative_risk","confidence_reasoning"]
   },
+
   "dimensionDescriptions": {
-    "detection_logic": "Explain what each prioritized rule or alert is intended to detect, including key thresholds, field dependencies, and time-window assumptions that affect interpretation.",
-    "telemetry_quality": "Explain which data sources or fields are missing, delayed, or inconsistent, and justify how those quality limits change analytic confidence and triage reliability.",
-    "false_positive_management": "Explain likely noise drivers and justify suppression, allowlisting, or context-enrichment decisions used to reduce non-actionable alert volume.",
-    "false_negative_risk": "Explain what attack behavior could be missed after tuning, especially where lower alert volume may conceal stealthy or low-frequency activity.",
-    "tuning_action": "Explain the specific tuning lever selected (for example threshold, join/context condition, allowlist/suppression, severity split, or time window) and why it is the most defensible immediate change.",
-    "detection_gap": "Explain the most critical coverage or visibility gap and justify why closing this gap should be prioritized for detection quality.",
-    "investigation_pivot": "Explain the next investigative check(s), why they are high-yield now, and what result would confirm or challenge your current position.",
-    "mitigation_tradeoff": "Explain the operational consequence of the chosen tuning/response action, including implementation burden, business disruption, and residual exposure.",
-    "risk_reasoning": "Explain how selected risk level follows from likely impact, exposure, and current evidence quality rather than alert count alone.",
-    "confidence_reasoning": "Explain how confidence level is justified by corroboration quality, conflicting signals, and telemetry limitations.",
-    "evidence_linkage": "Explain which concrete evidence items directly support each major conclusion and where inferences remain provisional.",
-    "hypothesis_alignment": "Explain how the final hypothesis is supported by your decision path and why competing interpretations are currently less persuasive."
+    "detection_logic": "Explain what the prioritized rule or alert is intended to detect and which thresholds, fields, or timing assumptions influence its meaning.",
+    "telemetry_quality": "Explain which telemetry fields or sources may be incomplete, delayed, or inconsistent and how this affects interpretation.",
+    "false_positive_management": "Discuss possible noise drivers and how suppression, enrichment, or contextual logic might reduce unnecessary alerts.",
+    "false_negative_risk": "Explain what attacker behaviors could be missed after tuning or suppression decisions.",
+    "tuning_action": "Explain the specific tuning adjustment being proposed and why it is a reasonable improvement given the evidence.",
+    "detection_gap": "Describe a visibility gap that may have limited detection capability.",
+    "investigation_pivot": "Describe one or two investigative checks that could clarify whether current alerts represent real threat activity.",
+    "mitigation_tradeoff": "Explain operational impacts or tradeoffs created by the proposed response or tuning action.",
+    "risk_reasoning": "Explain why the chosen risk level follows logically from the observed signals and potential impact.",
+    "confidence_reasoning": "Explain why the chosen confidence level reflects the quality of available evidence and remaining uncertainty.",
+    "evidence_linkage": "Explain which specific evidence items support key conclusions.",
+    "hypothesis_alignment": "Explain how the final assessment aligns with the decision path taken during the simulation."
   },
+
   "reportSections": [
     {
       "title": "Executive Summary",
-      "template": "State what the SIEM is currently showing (signal vs noise), your leading incident interpretation, and your immediate recommendation in stakeholder-ready language."
+      "template": "Briefly summarize the situation: what the SIEM alerts indicate, the most likely interpretation of the activity, and the immediate recommendation."
     },
     {
       "title": "Detection Logic Interpretation",
-      "template": "Describe what prioritized rule logic is trying to catch, then explain which thresholds, fields, joins/context, and time windows most influence whether alerts are meaningful."
+      "template": "Explain what the relevant correlation rules or alerts are designed to detect and which thresholds or contextual signals influence their reliability."
     },
     {
-      "title": "Noise vs Signal Rationale",
-      "template": "Justify why selected alerts are treated as higher signal and why deprioritized streams are likely noise or lower-confidence indicators at this stage."
+      "title": "Signal vs Noise Assessment",
+      "template": "Explain why certain alerts appear meaningful signals while others may represent benign or low-confidence activity."
     },
     {
       "title": "Telemetry Quality Assessment",
-      "template": "Identify missing/unreliable telemetry (fields, enrichment, source coverage, or ingestion delay) and explain the practical impact on detection precision and incident confidence."
+      "template": "Identify telemetry limitations such as missing fields, ingestion delays, or inconsistent normalization that affect detection accuracy."
     },
     {
       "title": "Tuning Recommendation",
-      "template": "Specify the exact tuning change to implement now, why it is preferable to alternatives, and the expected near-term effect on queue quality and analyst decision speed."
+      "template": "Describe a specific detection improvement or rule adjustment and explain why it is preferable to alternative tuning options."
     },
     {
-      "title": "Tradeoffs and Risks",
-      "template": "Explicitly compare false-positive reduction benefits against false-negative risk, and describe operational side effects or stakeholder impacts of the selected path."
+      "title": "Operational Tradeoffs",
+      "template": "Explain the potential operational consequences of the proposed tuning or response actions."
     },
     {
-      "title": "Next Investigative Pivot",
-      "template": "Name the top 1–2 immediate checks to validate your position, including what outcomes would increase or decrease confidence."
+      "title": "Next Investigative Steps",
+      "template": "Identify one or two investigative checks that would most effectively validate or challenge the current assessment."
     },
     {
       "title": "Professional Conclusion",
-      "template": "Close with concrete next steps, owners, and trigger conditions for reassessment using concise language suitable for technical and leadership audiences."
+      "template": "Close with concise next steps and explain how analysts should reassess the situation if new evidence appears."
     }
   ],
+
   "gapRules": [
+    {
+      "id": "missing_detection_gap",
+      "dimension": "detection_gap",
+      "minCount": 1,
+      "prompt": "You may want to explain the most significant visibility or telemetry gap and how it affected the reliability of the alerts."
+    },
     {
       "id": "missing_tuning_action",
       "dimension": "tuning_action",
       "minCount": 1,
-      "prompt": "Name one specific tuning lever to apply now (threshold, join/context condition, allowlist/suppression, time window, or enrichment dependency) and justify why it is the best immediate control."
+      "prompt": "Consider proposing one practical tuning adjustment and explaining how it could improve detection quality."
     },
     {
-      "id": "missing_telemetry_quality",
-      "dimension": "telemetry_quality",
-      "minCount": 1,
-      "prompt": "Identify at least one telemetry quality issue (missing field, unreliable source, normalization mismatch, or delay) and explain the concrete consequence for detection or triage."
-    },
-    {
-      "id": "missing_mitigation_tradeoff",
+      "id": "missing_tradeoff",
       "dimension": "mitigation_tradeoff",
       "minCount": 1,
-      "prompt": "State one explicit post-tuning tradeoff: what operational activity may be impacted and what malicious behavior might be missed as a result."
-    },
-    {
-      "id": "missing_investigation_pivot",
-      "dimension": "investigation_pivot",
-      "minCount": 1,
-      "prompt": "Specify what you would check next and what finding would materially change your confidence level or chosen response path."
+      "prompt": "You may want to discuss at least one operational tradeoff associated with the recommended response or tuning change."
     },
     {
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Justify confidence explicitly by linking evidence quality to remaining telemetry limitations and unresolved uncertainty."
+      "prompt": "Explain why the selected confidence level is appropriate given the available evidence and remaining uncertainty."
     }
   ]
 }
