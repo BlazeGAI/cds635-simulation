@@ -253,6 +253,24 @@ textarea {
   text-align: left;
 }
 
+.feedback-details {
+  margin-top: 1rem;
+  padding: 0.85rem;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.feedback-details summary {
+  cursor: pointer;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.feedback-details[open] summary {
+  margin-bottom: 0.9rem;
+}
+
 @media (min-width: 900px) {
   .weeks-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -273,5 +291,20 @@ textarea {
 
   .card {
     box-shadow: none;
+  }
+
+  .feedback-details {
+    border: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .feedback-details summary {
+    list-style: none;
+    pointer-events: none;
+  }
+
+  .feedback-details summary::-webkit-details-marker {
+    display: none;
   }
 }
