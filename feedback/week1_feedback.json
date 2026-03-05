@@ -1,0 +1,92 @@
+{
+  "dimensionTags": {
+    "D1::Prioritize phishing infrastructure investigation": ["intel", "collection", "tradeoff"],
+    "D1::Prioritize authentication log anomaly review": ["network", "collection", "tradeoff"],
+    "D2::Likely broad credential-harvesting attempt with limited compromise evidence": ["identity", "intel", "risk_reasoning", "confidence_reasoning"],
+    "D2::Likely targeted intrusion already in progress": ["identity", "timeline", "risk_reasoning", "tradeoff"],
+    "D3::Preliminary probing activity; insufficient evidence of successful access": ["endpoint", "network", "confidence_reasoning"],
+    "D3::Strong evidence of active privileged compromise": ["identity", "network", "risk_reasoning", "tradeoff"],
+    "D4::Request rapid user-impact sampling and SSO telemetry correlation": ["collection", "mitigation", "detection_gap", "timeline"],
+    "D4::Escalate directly to incident declaration without additional validation": ["mitigation", "risk_reasoning", "tradeoff", "detection_gap"]
+  },
+  "dimensionDescriptions": {
+    "identity": "Identity and account-centric signals, including account misuse, credential abuse, and authentication patterns.",
+    "endpoint": "Endpoint-level artifacts such as host telemetry, process behavior, and local compromise indicators.",
+    "network": "Network and access telemetry, including connection behavior, perimeter events, and service exposure.",
+    "intel": "External or contextual intelligence used to frame observed indicators and likely adversary behavior.",
+    "timeline": "Temporal sequencing and progression of events to assess momentum, causality, and urgency.",
+    "collection": "Information-gathering actions that reduce uncertainty before major reporting or response decisions.",
+    "mitigation": "Risk-reduction actions intended to contain impact or harden posture.",
+    "detection_gap": "Acknowledgment of unknowns, blind spots, or missing telemetry that may affect interpretation.",
+    "tradeoff": "Recognition of competing priorities and the cost of acting now versus validating further.",
+    "risk_reasoning": "Rationale for stated risk level tied to observed impact, likelihood, and exposure.",
+    "confidence_reasoning": "Rationale for confidence level tied to source quality, corroboration, and uncertainty.",
+    "hypothesis_alignment": "Clarity about how evidence and choices support the selected working hypothesis."
+  },
+  "reportSections": [
+    {
+      "title": "Executive Summary",
+      "template": "State your primary hypothesis in one clear sentence, then summarize current risk and confidence in plain language for leadership."
+    },
+    {
+      "title": "Situation and Assumptions",
+      "template": "Describe what is known, what is assumed, and which assumptions could materially change your assessment."
+    },
+    {
+      "title": "Evidence Summary (3–5 key items)",
+      "template": "Present 3–5 high-value evidence points with brief source context and why each item matters to your hypothesis."
+    },
+    {
+      "title": "Hypothesis and Alternatives",
+      "template": "Explain the selected hypothesis and at least one viable alternative interpretation you considered and why it was deprioritized."
+    },
+    {
+      "title": "Risk and Confidence Rationale",
+      "template": "Justify your chosen risk and confidence levels using uncertainty, corroboration, and likely impact."
+    },
+    {
+      "title": "Collection Plan (top 1–2 actions)",
+      "template": "List the top 1–2 immediate collection actions that would most reduce uncertainty in your current assessment."
+    },
+    {
+      "title": "Mitigation Recommendations and Tradeoffs",
+      "template": "Recommend immediate mitigation actions and explain at least one operational tradeoff or downside for each action."
+    },
+    {
+      "title": "Professional Conclusion (next steps)",
+      "template": "Close with concise next steps, owners, and decision points for the next reporting cycle."
+    }
+  ],
+  "gapRules": [
+    {
+      "id": "missing_collection",
+      "dimension": "collection",
+      "minCount": 1,
+      "prompt": "Add a collection plan that names 1–2 concrete data pulls (for example SSO, endpoint, or email telemetry) and explains how each would reduce uncertainty."
+    },
+    {
+      "id": "missing_detection_gap",
+      "dimension": "detection_gap",
+      "minCount": 1,
+      "prompt": "Explicitly document detection gaps and unknowns so readers can distinguish confirmed findings from unresolved questions."
+    },
+    {
+      "id": "missing_tradeoff",
+      "dimension": "tradeoff",
+      "minCount": 1,
+      "prompt": "Include at least one action tradeoff statement (benefit, cost, and potential consequence) for your recommended path."
+    },
+    {
+      "id": "missing_risk_reasoning",
+      "dimension": "risk_reasoning",
+      "minCount": 1,
+      "prompt": "Tie your risk level to concrete impact and likelihood reasoning, not just indicator volume."
+    },
+    {
+      "id": "missing_confidence_reasoning",
+      "dimension": "confidence_reasoning",
+      "minCount": 1,
+      "prompt": "Explain confidence through source quality and corroboration, and identify what would raise confidence in the next cycle."
+    }
+  ]
+}

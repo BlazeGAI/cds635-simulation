@@ -199,6 +199,7 @@ export default function WeekSimulationClient({ scenario, weekId }: { scenario: S
 
       {step === 'complete' && finalRecord && (
         <FinalAssessment
+          scenarioId={finalRecord.scenarioId}
           studentDisplayName={finalRecord.studentDisplayName}
           completedAt={finalRecord.completedAt}
           durationMinutes={finalRecord.durationMinutes}
