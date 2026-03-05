@@ -3,7 +3,7 @@
   "title": "Week 4: Detection Engineering Reasoning — SIEM Evaluation and Alert Tuning",
   "briefing": {
     "narrative": "The university SOC has seen a sharp rise in SIEM alerts tied to authentication failures, script execution, and outbound DNS anomalies in the same 24-hour period. Leadership wants to know whether this is mostly noisy operational activity, a stealthy intrusion signal being diluted by telemetry quality issues, or both. Your task is to evaluate rule logic, alert quality, and defensible tuning choices while balancing false positives against false negatives.",
-    "instructions": "Review each evidence item for detection logic quality, data reliability, and operational context. Distinguish likely noise from meaningful signal, identify one critical visibility gap, and choose a pragmatic tuning action plus a short-term containment or monitoring step. Multiple outcomes can be defensible if your reasoning is coherent and risk-aware."
+    "instructions": "Review each evidence item for detection logic quality, data reliability, and operational context. Distinguish likely noise from meaningful signal, identify one critical visibility gap, and choose a pragmatic tuning action plus a short-term containment or monitoring step. Multiple outcomes can be defensible if your reasoning is coherent and risk-aware. Indicators such as IP addresses, domains, and account names are sanitized for training and may include reserved documentation ranges."
   },
   "evidence_items": [
     {
@@ -54,7 +54,7 @@
     {
       "id": "E10",
       "type": "indicator",
-      "content": "Identity telemetry sample: jhansen had successful MFA-backed login from campus IP at 08:58, then failures from NL at 09:12-09:13, then successful login from same campus subnet at 09:21 via known managed device. No impossible-travel rule fired because identity provider geolocation enrichment timed out."
+      "content": "Identity telemetry sample: jhansen had successful MFA-backed login from campus IP at 08:58, then failures from NL at 09:12-09:13 (incorrect password), then successful login from same campus subnet at 09:21 via known managed device. No impossible-travel rule fired because identity provider geolocation enrichment timed out in the identity provider (SIEM source_country is derived from a separate local GeoIP database)."
     }
   ],
   "decision_nodes": [
