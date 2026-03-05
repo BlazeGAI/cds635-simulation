@@ -1,0 +1,113 @@
+{
+  "dimensionTags": {
+    "D7-01::AI-enabled business email compromise combining deepfake voice pretext and SaaS identity abuse": ["ai_enabled_social_engineering", "iam_saas_risk", "risk_reasoning"],
+    "D7-01::Primarily legacy IAM governance weakness with opportunistic social engineering as a secondary factor": ["iam_saas_risk", "governance_controls", "risk_reasoning"],
+    "D7-01::Mostly alert noise and process confusion with limited evidence of adversary follow-through": ["strategic_detection_gap", "confidence_reasoning", "uncertainty_collection"],
+
+    "D7-02::Fraud via rapid payment diversion before manual verification catches the change": ["risk_reasoning", "business_impact", "stakeholder_communication"],
+    "D7-02::Espionage through sustained access to finance and grant records": ["risk_reasoning", "business_impact", "governance_controls"],
+    "D7-02::Extortion leverage by combining data theft claims with operational pressure": ["risk_reasoning", "business_impact", "tradeoff"],
+    "D7-02::Disruption of treasury operations to cause cascading institutional impact": ["risk_reasoning", "business_impact", "defensive_prioritization"],
+
+    "D7-03::Uncontrolled service-account privileges and weak approval controls in finance automation": ["governance_controls", "iam_saas_risk", "defensive_prioritization"],
+    "D7-03::Dependence on incomplete AI triage that can bias early executive decisions": ["strategic_detection_gap", "stakeholder_communication", "confidence_reasoning"],
+    "D7-03::Telemetry noise reducing analyst trust in high-consequence alerts": ["strategic_detection_gap", "uncertainty_collection", "confidence_reasoning"],
+
+    "D7-04::Insufficient SaaS/IAM telemetry retention and limited token-level forensic visibility": ["strategic_detection_gap", "iam_saas_risk", "defensive_prioritization"],
+    "D7-04::Gaps in endpoint coverage during critical decision windows for finance users": ["strategic_detection_gap", "defensive_prioritization", "tradeoff"],
+    "D7-04::Lack of integrated voice-fraud verification telemetry in SOC workflows": ["strategic_detection_gap", "ai_enabled_social_engineering", "governance_controls"],
+
+    "D7-05::Eliminate MFA exceptions for finance automation identities, enforce two-person approval for app credential changes, and require cryptographic callback verification for treasury payment reroutes": ["governance_controls", "defensive_prioritization", "tradeoff", "stakeholder_communication"],
+    "D7-05::Prioritize analyst tooling only: expand AI triage prompts and defer control-policy changes until annual audit cycle": ["defensive_prioritization", "tradeoff", "strategic_detection_gap", "uncertainty_collection"],
+    "D7-05::Focus on user awareness campaign alone while maintaining current approval and identity exception model": ["governance_controls", "tradeoff", "stakeholder_communication"]
+  },
+  "dimensionDescriptions": {
+    "ai_enabled_social_engineering": "Explain how AI-enhanced social engineering (for example spearphish personalization, deepfake voice, or synthetic identity signals) changed attacker credibility, speed, or scale in this scenario, and what that means for strategic risk.",
+    "iam_saas_risk": "Assess identity and SaaS control exposure (M365/IAM settings, device trust assumptions, conditional access, OAuth consent and token governance), and describe how these controls influenced attacker opportunity.",
+    "governance_controls": "Provide at least one concrete governance/control recommendation tied to policy, approvals, privileged access management, workforce training, or vendor/third-party controls; include owner and implementation horizon.",
+    "strategic_detection_gap": "Identify the highest-impact monitoring, telemetry-retention, or workflow blind spot that limits strategic decision quality, and explain why this gap materially increases institutional risk.",
+    "business_impact": "Translate technical findings into mission/business consequences, including effects on treasury/payroll/partner operations, contractual exposure, and potential regulatory or oversight implications.",
+    "defensive_prioritization": "Present a prioritized 90-day defense plan with sequencing logic (what happens first, second, third), emphasizing highest risk reduction under realistic staffing and dependency constraints.",
+    "tradeoff": "State at least one explicit security-versus-usability/operations tradeoff in your recommended plan, and explain how you will mitigate adoption friction or service disruption.",
+    "stakeholder_communication": "Write executive-ready rationale in plain language: what decision is needed, why now, expected impact, and how technical details support—not obscure—the recommendation.",
+    "risk_reasoning": "Justify risk using explicit impact × likelihood reasoning tied to scenario evidence, not indicator volume alone; show why your selected risk level is defensible.",
+    "confidence_reasoning": "Justify confidence by referencing evidence quality, corroboration, and unresolved ambiguity; explicitly state why confidence is not one level higher or lower.",
+    "uncertainty_collection": "Name the highest-yield evidence or validation actions that would reduce uncertainty fastest, and describe exactly how each possible result would change your recommendation."
+  },
+  "reportSections": [
+    {
+      "title": "Executive Summary (strategic risk statement + recommendation)",
+      "template": "Provide a plain-language strategic risk statement for leadership, identify the decision requiring approval now, and summarize your recommended action path in 2–4 sentences."
+    },
+    {
+      "title": "Threat Trend and Scenario Interpretation (AI capability/speed/scale)",
+      "template": "Explain how AI-enabled behaviors in this scenario change attacker capability, speed, or scale versus traditional BEC/identity abuse, and why that shift matters for institutional defenses."
+    },
+    {
+      "title": "Evidence and Assumptions (what you can and cannot infer)",
+      "template": "Separate confirmed evidence from assumptions, identify telemetry limits, and note which unknowns most constrain attribution, objective certainty, or response confidence."
+    },
+    {
+      "title": "Primary Hypothesis and Alternatives (most defensible interpretation)",
+      "template": "State your primary hypothesis, provide at least one plausible alternative, and justify why your primary interpretation is currently the most defensible given available evidence."
+    },
+    {
+      "title": "Risk Assessment (business impact + regulatory/operational implications)",
+      "template": "Assess impact and likelihood explicitly, then connect likely outcomes to mission-critical services, financial control obligations, and operational continuity risk."
+    },
+    {
+      "title": "Strategic Detection Gap (what you cannot see and why it matters)",
+      "template": "Identify the largest current monitoring/retention blind spot, explain how it weakens strategic decision-making, and define the most practical fix."
+    },
+    {
+      "title": "Governance and Control Recommendations (90-day plan, sequencing, owners)",
+      "template": "Recommend sequenced governance/control actions across 90 days, assign accountable owners, and indicate dependencies or policy approvals needed for execution."
+    },
+    {
+      "title": "Tradeoffs and Change Management (usability/operations + adoption risk)",
+      "template": "Describe operational/usability tradeoffs of your plan, likely resistance points, and the change-management approach to sustain adoption while reducing risk."
+    },
+    {
+      "title": "Professional Conclusion (next steps + stakeholder communication)",
+      "template": "Close with concrete next steps for leadership and operations, plus the communication message each stakeholder group needs to support timely execution."
+    }
+  ],
+  "gapRules": [
+    {
+      "id": "missing_governance_controls",
+      "dimension": "governance_controls",
+      "minCount": 1,
+      "prompt": "Add at least one governance/control recommendation that includes a named owner and a clear implementation timeframe."
+    },
+    {
+      "id": "missing_strategic_detection_gap",
+      "dimension": "strategic_detection_gap",
+      "minCount": 1,
+      "prompt": "Name the single largest monitoring or retention blind spot and provide a concrete remediation path with expected risk-reduction effect."
+    },
+    {
+      "id": "missing_tradeoff",
+      "dimension": "tradeoff",
+      "minCount": 1,
+      "prompt": "State at least one operational or usability tradeoff created by your recommendation and how you will mitigate its negative effects."
+    },
+    {
+      "id": "weak_stakeholder_communication",
+      "dimension": "stakeholder_communication",
+      "minCount": 1,
+      "prompt": "Add a plain-language executive summary that clearly states the decision required, why it matters now, and the rationale in non-technical terms."
+    },
+    {
+      "id": "missing_risk_reasoning",
+      "dimension": "risk_reasoning",
+      "minCount": 1,
+      "prompt": "Explicitly justify impact and likelihood using scenario evidence, and show how that reasoning supports your selected risk level."
+    },
+    {
+      "id": "missing_confidence_reasoning",
+      "dimension": "confidence_reasoning",
+      "minCount": 1,
+      "prompt": "Provide explicit confidence rationale and describe what additional evidence would increase or decrease confidence."
+    }
+  ]
+}

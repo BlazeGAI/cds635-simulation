@@ -4,6 +4,7 @@ import week3FeedbackRules from '@/feedback/week3_feedback.json';
 import week4FeedbackRules from '@/feedback/week4_feedback.json';
 import week5FeedbackRules from '@/feedback/week5_feedback.json';
 import week6FeedbackRules from '@/feedback/week6_feedback.json';
+import week7FeedbackRules from '@/feedback/week7_feedback.json';
 
 type DecisionLogEntry = {
   decisionId: string;
@@ -52,6 +53,7 @@ const feedbackRulesByWeek: Record<string, FeedbackRules> = {
   '4': week4FeedbackRules as FeedbackRules,
   '5': week5FeedbackRules as FeedbackRules,
   '6': week6FeedbackRules as FeedbackRules,
+  '7': week7FeedbackRules as FeedbackRules,
 };
 
 function getWeekKeyFromScenarioId(scenarioId: string): string {
@@ -213,6 +215,28 @@ export function generateFeedback({ scenarioId, decisionLog, finalSelections }: G
     if (benignCount > beaconingCount && benignCount >= exfilCount) {
       implications.push('Your decision path leans toward benign automation; explicitly justify why suspicious overlaps (for example randomized subdomains or mixed user-agents) are acceptable under the documented operational context.');
     }
+  }
+
+
+  if (supportsDimension('governance_controls') && supportsDimension('strategic_detection_gap')) {
+    const governanceCount = coverageCounts.governance_controls ?? 0;
+    const detectionGapCount = coverageCounts.strategic_detection_gap ?? 0;
+
+    if (governanceCount > detectionGapCount) {
+      implications.push('Your path emphasizes governance and control reform; quantify how policy, approvals, and ownership changes will produce measurable risk reduction in the next 90 days.');
+    }
+
+    if (detectionGapCount > governanceCount) {
+      implications.push('Your path emphasizes technical visibility gaps; connect telemetry retention and monitoring fixes to governance decisions so controls are enforceable and durable.');
+    }
+  }
+
+  if (supportsDimension('tradeoff') && supportsDimension('defensive_prioritization') && (coverageCounts.tradeoff ?? 0) > 0 && (coverageCounts.defensive_prioritization ?? 0) > 0) {
+    implications.push('Your selections include both prioritization and tradeoff reasoning; in the report, specify which control changes should ship first and which operational impacts stakeholders must temporarily accept.');
+  }
+
+  if (supportsDimension('stakeholder_communication') && (coverageCounts.stakeholder_communication ?? 0) === 0) {
+    implications.push('Your analysis may be technically strong but not yet executive-ready; add plain-language decision framing that links control choices to business outcomes.');
   }
 
   if (supportsDimension('containment_strategy') && supportsDimension('evidence_preservation') && (coverageCounts.containment_strategy ?? 0) > 0 && (coverageCounts.evidence_preservation ?? 0) > 0) {
