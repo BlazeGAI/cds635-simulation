@@ -21,16 +21,16 @@
     "D5::Execute broad resilience posture uplift while preserving evidence for attribution refinement": ["mitigation", "tradeoff", "capability", "confidence_reasoning"]
   },
   "dimensionDescriptions": {
-    "adversary_modeling": "How clearly the report defines likely actor type and operating model under uncertainty.",
-    "intent": "Reasoned statement of what the actor is trying to achieve and why it fits the evidence.",
+    "adversary_modeling": "How clearly your report defines the likely actor type and operating model under uncertainty.",
+    "intent": "A reasoned statement of what the actor is trying to achieve and why it fits the evidence.",
     "capability": "Assessment of actor sophistication, access quality, and operational discipline.",
     "targeting": "Explanation of who or what is being prioritized and why that targeting is plausible.",
     "next_move": "Forecast of likely adversary behavior in the next 24–72 hours.",
     "collection": "Concrete collection actions that would materially reduce uncertainty.",
     "mitigation": "Immediate defensive actions matched to likely impact and operational constraints.",
     "tradeoff": "Acknowledgment of downside, friction, and second-order effects of chosen mitigations.",
-    "risk_reasoning": "Explicit rationale for risk level tied to impact and likelihood.",
-    "confidence_reasoning": "Explicit rationale for confidence level tied to evidence quality and gaps."
+    "risk_reasoning": "Rationale for risk level tied to likely impact and likelihood.",
+    "confidence_reasoning": "Rationale for confidence level tied to evidence quality and gaps."
   },
   "reportSections": [
     {
@@ -55,7 +55,7 @@
     },
     {
       "title": "Recommendations and Tradeoffs",
-      "template": "Recommend the immediate mitigation path, then state its downside and one compensating control to manage that downside."
+      "template": "Recommend the immediate mitigation path, then describe its downside and one compensating control to manage that downside."
     },
     {
       "title": "Professional Conclusion",
@@ -67,31 +67,31 @@
       "id": "missing_collection",
       "dimension": "collection",
       "minCount": 1,
-      "prompt": "Add a specific collection plan (1–2 concrete actions) and explain exactly what each result would confirm, refute, or re-prioritize."
+      "prompt": "Consider including a specific collection plan (one or two concrete actions). Explain what each result would confirm, refute, or re-prioritize."
     },
     {
       "id": "missing_tradeoff",
       "dimension": "tradeoff",
       "minCount": 1,
-      "prompt": "State the downside of your chosen mitigation and name a compensating control that reduces that downside."
+      "prompt": "Consider stating one downside of your chosen mitigation and naming a compensating control that could reduce that downside."
     },
     {
       "id": "weak_adversary_modeling",
       "dimension": "adversary_modeling",
       "minCount": 2,
-      "prompt": "Strengthen adversary modeling by explicitly connecting actor intent, capability, and targeting to the evidence trail."
+      "prompt": "Consider strengthening adversary modeling by explicitly connecting actor intent, capability, and targeting to the evidence trail."
     },
     {
       "id": "missing_risk_reasoning",
       "dimension": "risk_reasoning",
       "minCount": 1,
-      "prompt": "Provide explicit risk reasoning tied to likely impact, exposure, and attacker opportunity."
+      "prompt": "Explain your risk rationale in terms of likely impact, exposure, and attacker opportunity."
     },
     {
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Provide explicit confidence reasoning tied to source quality, corroboration, and unresolved gaps."
+      "prompt": "Describe why you selected this confidence level. Note what evidence quality limitations or unresolved gaps influenced your decision, and what would increase confidence."
     }
   ]
 }
