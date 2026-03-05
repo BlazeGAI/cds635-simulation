@@ -67,31 +67,31 @@
       "id": "missing_collection",
       "dimension": "collection",
       "minCount": 1,
-      "prompt": "Consider including a specific collection plan (one or two concrete actions). Explain what each result would confirm, refute, or re-prioritize."
+      "prompt": "Consider including a specific collection plan (one or two concrete actions) and explaining what each result could confirm, refute, or re-prioritize."
     },
     {
       "id": "missing_tradeoff",
       "dimension": "tradeoff",
       "minCount": 1,
-      "prompt": "Consider stating one downside of your chosen mitigation and naming a compensating control that could reduce that downside."
+      "prompt": "You may want to describe one downside of your chosen mitigation and mention a compensating control that could help reduce that downside."
     },
     {
       "id": "weak_adversary_modeling",
       "dimension": "adversary_modeling",
       "minCount": 2,
-      "prompt": "Consider strengthening adversary modeling by explicitly connecting actor intent, capability, and targeting to the evidence trail."
+      "prompt": "Consider strengthening adversary modeling by clearly connecting actor intent, capability, and targeting to the evidence trail."
     },
     {
       "id": "missing_risk_reasoning",
       "dimension": "risk_reasoning",
       "minCount": 1,
-      "prompt": "Explain your risk rationale in terms of likely impact, exposure, and attacker opportunity."
+      "prompt": "It may help to explain your risk rationale in terms of likely impact, exposure, and attacker opportunity."
     },
     {
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Describe why you selected this confidence level. Note what evidence quality limitations or unresolved gaps influenced your decision, and what would increase confidence."
+      "prompt": "You may want to describe why this confidence level was selected, which evidence quality limitations or unresolved gaps influenced the decision, and what could increase confidence."
     }
   ]
 }

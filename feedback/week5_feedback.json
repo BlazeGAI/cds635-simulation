@@ -147,7 +147,7 @@
       "id": "missing_investigation_pivot",
       "dimension": "investigation_pivot",
       "minCount": 1,
-      "prompt": "Consider identifying one investigative check that could most quickly clarify whether the activity represents beaconing, exfiltration, or legitimate automation."
+      "prompt": "Consider identifying one investigative check that could most quickly clarify whether the activity reflects beaconing, exfiltration, or legitimate automation."
     },
     {
       "id": "missing_endpoint_to_network_linkage",
@@ -165,7 +165,7 @@
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Explain why the selected confidence level appropriately reflects both the evidence available and remaining uncertainty."
+      "prompt": "It may help to explain why the selected confidence level reflects both the evidence available and the remaining uncertainty."
     }
   ]
 }

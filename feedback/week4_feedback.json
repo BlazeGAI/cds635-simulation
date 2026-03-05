@@ -95,7 +95,7 @@
       "id": "missing_confidence_reasoning",
       "dimension": "confidence_reasoning",
       "minCount": 1,
-      "prompt": "Explain why the selected confidence level is appropriate given the available evidence and remaining uncertainty."
+      "prompt": "It may help to explain why the selected confidence level fits the available evidence and remaining uncertainty."
     }
   ]
 }
